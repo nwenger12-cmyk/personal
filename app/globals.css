@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Light is the default. Dark follows the OS unless the user picks a theme in
+ * Settings, which stamps `data-theme` on <html> and wins over the media query.
+ * Both selectors redefine the SAME variable names -- nothing below this block
+ * and no component knows which theme is active.
+ */
+:root {
+  --bg: 248 250 252;
+  --surface: 255 255 255;
+  --surface-2: 244 246 250;
+  --line: 226 232 240;
+  --line-strong: 203 213 225;
+
+  --text: 15 23 42;
+  --muted: 71 85 105;
+  --dim: 100 116 139;      /* the quiet floor: 4.6:1 on --surface. Nothing dimmer. */
+
+  --accent: 79 70 229;
+  --accent-ink: 67 56 202;
+  --on-accent: 255 255 255;
+
+  --ok: 5 150 105;
+  --ok-ink: 4 120 87;
+  --on-ok: 255 255 255;
+
+  --warn: 217 119 6;
+  --warn-ink: 180 83 9;
+  --on-warn: 255 255 255;
+
+  --danger: 220 38 38;
+  --danger-ink: 185 28 28;
+  --on-danger: 255 255 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: 9 12 20;
+    --surface: 18 23 34;
+    --surface-2: 26 32 46;
+    --line: 39 47 64;
+    --line-strong: 55 65 85;
+
+    --text: 236 240 248;
+    --muted: 163 175 194;
+    --dim: 138 150 170;
+
+    --accent: 129 140 248;
+    --accent-ink: 165 180 252;
+    --on-accent: 12 16 26;
+
+    --ok: 52 211 153;
+    --ok-ink: 110 231 183;
+    --on-ok: 6 24 20;
+
+    --warn: 251 191 36;
+    --warn-ink: 253 214 118;
+    --on-warn: 28 20 4;
+
+    --danger: 248 113 113;
+    --danger-ink: 252 165 165;
+    --on-danger: 32 10 10;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: 9 12 20;
+  --surface: 18 23 34;
+  --surface-2: 26 32 46;
+  --line: 39 47 64;
+  --line-strong: 55 65 85;
+
+  --text: 236 240 248;
+  --muted: 163 175 194;
+  --dim: 138 150 170;
+
+  --accent: 129 140 248;
+  --accent-ink: 165 180 252;
+  --on-accent: 12 16 26;
+
+  --ok: 52 211 153;
+  --ok-ink: 110 231 183;
+  --on-ok: 6 24 20;
+
+  --warn: 251 191 36;
+  --warn-ink: 253 214 118;
+  --on-warn: 28 20 4;
+
+  --danger: 248 113 113;
+  --danger-ink: 252 165 165;
+  --on-danger: 32 10 10;
+}
+
+html {
+  color-scheme: light;
+  background-color: rgb(var(--bg));
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) { color-scheme: dark; }
+}
+html[data-theme='dark'] { color-scheme: dark; }
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular figures everywhere a number is compared down a column. */
+.font-mono { font-variant-numeric: tabular-nums; }
+
+/*
+ * One focus ring for the whole app, with !important so it beats the
+ * `outline-none` utilities on inputs and buttons. Don't re-implement focus
+ * per component.
+ */
+:focus-visible {
+  outline: 2px solid rgb(var(--accent)) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px;
+}
+
+/*
+ * Collapse motion rather than removing it: transition/animation events must
+ * still fire, or anything whose completion handler advances state hangs.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Date inputs render a near-invisible picker icon on a dark ground otherwise. */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) input[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+  }
+}
+html[data-theme='dark'] input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+}
