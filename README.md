@@ -1,7 +1,6 @@
 # Card Hub
 
-A personal dashboard for the three things about a credit card that cost real
-money if you forget them:
+A personal dashboard for the things that cost real money if you forget them:
 
 - **Annual fees** — when each one posts, and how long you have left to decide
   whether to keep, downgrade, or cancel before it does.
@@ -9,6 +8,9 @@ money if you forget them:
   dollars-per-day you have to keep spending to finish in time.
 - **Points** — what each balance is actually worth, priced every way you can
   redeem it.
+
+- **Spending** — every transaction categorised against the Schedule C line it
+  lands on, split by business, and totalled for the tax year.
 
 Plus a **Chase 5/24 counter** computed from your own card list, since that is
 the constraint that decides what you can apply for next.
@@ -97,6 +99,60 @@ are what the issuer publishes. Transfer-partner rates are marked as *estimates*
 because what a point is worth depends entirely on the award you book. Every
 rate is editable in Settings; replace them with what you actually get.
 
+## Spending and tax categorisation
+
+**Categories map to Schedule C lines.** Sorting spend into invented buckets
+produces a spreadsheet someone has to re-sort at tax time. Every category here
+names the line it prints on, and the summary groups by line, so the total is
+one you type straight in. Several categories share line 27a (Other expenses);
+those stay separate on screen because the return itemises them in Part V.
+
+**Entities keep businesses apart.** Expenses are attributed to an entity —
+LocusStock, another business, personal — and each one gets its own set of
+totals, because each business files its own Schedule C. Entities are yours to
+name and classify in Settings.
+
+**Deductible percentages.** Most business spend defaults to 100%; the
+exceptions carry the statutory limit that catches people out (business meals at
+50%). Override it per expense for anything used partly personally — a phone
+line, a tank of gas half spent scouting locations.
+
+Two things are always zero in a deductible total, and are zero everywhere
+consistently — list view, summary, and both exports:
+
+- anything filed to a **personal** entity, since personal spending is not
+  deductible on a business return. Its gross is still tracked so the year is
+  complete and the split is visible. If something genuinely belongs to a
+  business, file it to a business entity — that choice is what the entity kind
+  is for.
+- anything still **uncategorised**, so unfiled spend never gets quietly folded
+  into a number you copy onto a form. The count and the amount are reported
+  next to the totals instead.
+
+**Importing.** The Spending tab takes the same issuer CSVs. Merchant rules file
+what they recognise — the built-in set covers Adobe, AWS, Cloudflare, B&H,
+Lensrentals, the airlines and the usual subscriptions — and you can add your
+own, which are tried first so they override a shipped rule for the same
+merchant. Re-importing a statement that overlaps one already loaded skips the
+rows it has seen rather than duplicating them. Payments to the card are dropped;
+refunds come in negative so they net off the category. Everything a rule
+touched still arrives unreviewed: a rule decides where a transaction goes, you
+decide whether it was right.
+
+Annual fees you have already recorded against a card can be pulled into the
+expense list as bank and card fees in one click, rather than typed twice.
+
+**Exports.** Two CSVs: the line totals for the return itself, and every
+transaction behind them — with gross, percentage, and deductible amount as
+separate columns, so whoever signs the return can see the judgement that was
+applied and not just its result.
+
+**What this is not.** It is a categorised record of what you spent, not tax
+advice and not a filed return. Several categories carry rules a summary cannot
+apply for you: mileage needs a contemporaneous log, equipment over the de
+minimis threshold gets capitalised rather than expensed, home office runs on
+its own form, and a business meal needs the business purpose recorded.
+
 ## A caution on the card catalog
 
 The catalog is a **typing shortcut, not a source of truth.** Annual fees change,
@@ -122,17 +178,20 @@ there is no server.
 ## Layout
 
 ```
-app/          dashboard, cards, bonuses, points, settings
-components/   UI primitives + the card editor, timeline, CSV import
+app/            dashboard, cards, bonuses, points, expenses, taxes, settings
+components/     UI primitives, the card and expense editors, timeline, imports
 lib/
-  dates.ts    UTC date math -- an open date is a calendar fact, not an instant
-  fees.ts     annual fee prediction and review windows
-  bonuses.ts  spend progress, pace, deadlines
-  rules.ts    5/24 and issuer application rules
-  csv.ts      issuer transaction imports
-  points.ts   balances priced by redemption route
-  catalog.ts  card catalog (starting values)
-  programs.ts rewards programs and valuations
-  storage.ts  localStorage, validation, import/export
-tests/        91 tests over the math above
+  dates.ts      UTC date math -- an open date is a calendar fact, not an instant
+  fees.ts       annual fee prediction and review windows
+  bonuses.ts    spend progress, pace, deadlines
+  rules.ts      5/24 and issuer application rules
+  csv.ts        issuer transaction imports
+  points.ts     balances priced by redemption route
+  catalog.ts    card catalog (starting values)
+  programs.ts   rewards programs and valuations
+  categories.ts expense categories mapped to Schedule C lines
+  categorize.ts merchant rules for filing imported rows
+  expenses.ts   tax-year totals, entity splits, CSV exports
+  storage.ts    localStorage, validation, import/export
+tests/          138 tests over the math above
 ```

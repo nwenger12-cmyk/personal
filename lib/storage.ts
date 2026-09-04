@@ -2,15 +2,20 @@ import { isIsoDate, today } from './dates';
 import type { IsoDate } from './dates';
 import { getCatalogCard } from './catalog';
 import type { CatalogCard } from './catalog';
+import { UNCATEGORIZED_ID, getCategory } from './categories';
 import {
   DATA_VERSION,
   DEFAULT_SETTINGS,
   ISSUER_ORDER,
+  defaultEntities,
   emptyData,
 } from './types';
 import type {
   AppData,
   CardAccount,
+  CategorizationRule,
+  Entity,
+  Expense,
   FeeCharge,
   Issuer,
   ProgramBalance,
@@ -156,8 +161,103 @@ function coerceBalances(value: unknown): ProgramBalance[] {
   });
 }
 
-function coerceSettings(value: unknown): Settings {
-  if (!value || typeof value !== 'object') return { ...DEFAULT_SETTINGS };
+function coerceEntities(value: unknown): Entity[] {
+  if (!Array.isArray(value)) return defaultEntities();
+  const seen = new Set<string>();
+  const entities = value.flatMap((entry): Entity[] => {
+    if (!entry || typeof entry !== 'object') return [];
+    const e = entry as Record<string, unknown>;
+    const id = str(e.id) || newId();
+    if (seen.has(id)) return [];
+    seen.add(id);
+    return [{
+      id,
+      name: str(e.name, 'Unnamed'),
+      kind: e.kind === 'personal' ? 'personal' : 'business',
+      notes: str(e.notes),
+    }];
+  });
+  // A store with no entities has nowhere to file an expense, so seed rather
+  // than leaving the expense form with an empty picker.
+  return entities.length > 0 ? entities : defaultEntities();
+}
+
+function coercePercent(value: unknown, fallback: number): number {
+  const n = num(value, fallback);
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
+
+function coerceExpenses(value: unknown, entities: Entity[]): Expense[] {
+  if (!Array.isArray(value)) return [];
+  const entityIds = new Set(entities.map((e) => e.id));
+  const fallbackEntity = entities[0]?.id ?? '';
+
+  return value.flatMap((entry): Expense[] => {
+    if (!entry || typeof entry !== 'object') return [];
+    const e = entry as Record<string, unknown>;
+    const when = nullableDate(e.date);
+    // Without a valid date an expense has no tax year, which is the one thing
+    // it cannot be missing. Drop it rather than filing it under today.
+    if (!when) return [];
+
+    const rawCategory = typeof e.categoryId === 'string' ? e.categoryId : null;
+    const categoryId = getCategory(rawCategory) ? (rawCategory as string) : UNCATEGORIZED_ID;
+    const entityId =
+      typeof e.entityId === 'string' && entityIds.has(e.entityId)
+        ? e.entityId
+        : fallbackEntity;
+    const source =
+      e.source === 'import' || e.source === 'card-fee' ? e.source : 'manual';
+
+    return [{
+      id: str(e.id) || newId(),
+      date: when,
+      amountCents: Math.round(num(e.amountCents)),
+      merchant: str(e.merchant),
+      description: str(e.description),
+      entityId,
+      categoryId,
+      cardId: typeof e.cardId === 'string' ? e.cardId : null,
+      deductiblePercent: coercePercent(
+        e.deductiblePercent,
+        getCategory(categoryId)?.defaultDeductiblePercent ?? 100,
+      ),
+      reviewed: bool(e.reviewed),
+      receiptNote: str(e.receiptNote),
+      source,
+      importKey: typeof e.importKey === 'string' ? e.importKey : null,
+      notes: str(e.notes),
+    }];
+  });
+}
+
+function coerceRules(value: unknown): CategorizationRule[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry): CategorizationRule[] => {
+    if (!entry || typeof entry !== 'object') return [];
+    const r = entry as Record<string, unknown>;
+    const match = str(r.match).trim();
+    if (!match) return [];
+    const categoryId = typeof r.categoryId === 'string' ? r.categoryId : null;
+    if (!getCategory(categoryId)) return [];
+    return [{
+      id: str(r.id) || newId(),
+      match,
+      categoryId: categoryId as string,
+      entityId: typeof r.entityId === 'string' ? r.entityId : null,
+      deductiblePercent:
+        typeof r.deductiblePercent === 'number' && Number.isFinite(r.deductiblePercent)
+          ? coercePercent(r.deductiblePercent, 100)
+          : null,
+      builtIn: false,
+    }];
+  });
+}
+
+function coerceSettings(value: unknown, entities: Entity[]): Settings {
+  if (!value || typeof value !== 'object') {
+    return { ...DEFAULT_SETTINGS, defaultEntityId: entities[0]?.id ?? null };
+  }
   const s = value as Record<string, unknown>;
   const theme =
     s.theme === 'light' || s.theme === 'dark' || s.theme === 'system'
@@ -173,6 +273,15 @@ function coerceSettings(value: unknown): Settings {
       365,
       Math.max(1, Math.round(num(s.bonusWarnDays, DEFAULT_SETTINGS.bonusWarnDays))),
     ),
+    activeTaxYear: Math.min(
+      2200,
+      Math.max(1990, Math.round(num(s.activeTaxYear, new Date().getFullYear()))),
+    ),
+    defaultEntityId:
+      typeof s.defaultEntityId === 'string' &&
+      entities.some((e) => e.id === s.defaultEntityId)
+        ? s.defaultEntityId
+        : entities[0]?.id ?? null,
   };
 }
 
@@ -194,12 +303,20 @@ export function coerceData(value: unknown): AppData {
         return card ? [card] : [];
       })
     : [];
+  // Order matters: expenses and settings are both validated against the
+  // entity list, so entities have to be resolved first. A v1 export has no
+  // entities at all and picks up the seeded pair here.
+  const entities = coerceEntities(d.entities);
+
   return {
     version: DATA_VERSION,
     cards,
     balances: coerceBalances(d.balances),
     valuationOverrides: coerceValuations(d.valuationOverrides),
-    settings: coerceSettings(d.settings),
+    entities,
+    expenses: coerceExpenses(d.expenses, entities),
+    categorizationRules: coerceRules(d.categorizationRules),
+    settings: coerceSettings(d.settings, entities),
     updatedAt: str(d.updatedAt, new Date().toISOString()),
   };
 }
@@ -327,4 +444,45 @@ export function blankBonus(card: CardAccount): SignupBonus {
     postedDate: null,
     notes: '',
   };
+}
+
+export function blankExpense(
+  entityId: string,
+  date: IsoDate = today(),
+): Expense {
+  return {
+    id: newId(),
+    date,
+    amountCents: 0,
+    merchant: '',
+    description: '',
+    entityId,
+    categoryId: UNCATEGORIZED_ID,
+    cardId: null,
+    deductiblePercent: 100,
+    reviewed: true,
+    receiptNote: '',
+    source: 'manual',
+    importKey: null,
+    notes: '',
+  };
+}
+
+/**
+ * Applying a category also resets the deductible percentage to that category's
+ * default -- moving an expense to Meals should pick up the 50% cap rather than
+ * silently keeping the 100% it had under Supplies. An explicit override is
+ * re-entered after; that is the safer direction to be wrong in.
+ */
+export function withCategory(expense: Expense, categoryId: string): Expense {
+  const category = getCategory(categoryId);
+  return {
+    ...expense,
+    categoryId,
+    deductiblePercent: category?.defaultDeductiblePercent ?? expense.deductiblePercent,
+  };
+}
+
+export function blankEntity(): Entity {
+  return { id: newId(), name: '', kind: 'business', notes: '' };
 }

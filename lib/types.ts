@@ -102,6 +102,77 @@ export type ProgramBalance = {
   updated: IsoDate;
 };
 
+// ---- Spending and tax categorisation ---------------------------------------
+
+/**
+ * A thing expenses get attributed to: a business, or personal spending.
+ *
+ * Entities are user-defined rather than a fixed list because the split is
+ * personal to whoever is using this -- one business, three businesses, and
+ * personal alongside them. Keeping them separate is what makes the tax summary
+ * usable: two businesses filing two Schedule Cs need two sets of totals, not
+ * one pile.
+ */
+export type EntityKind = 'business' | 'personal';
+
+export type Entity = {
+  id: string;
+  name: string;
+  kind: EntityKind;
+  /** Shown on the entity's tax summary -- EIN, filing form, whatever helps. */
+  notes: string;
+};
+
+export type Expense = {
+  id: string;
+  /** The date of the transaction, which is what decides its tax year. */
+  date: IsoDate;
+  /** Always positive. A refund is entered as a negative amount deliberately. */
+  amountCents: number;
+  merchant: string;
+  description: string;
+  entityId: string;
+  categoryId: string;
+  /** The card that paid, when it was one of yours. */
+  cardId: string | null;
+  /**
+   * How much of this counts as a deductible business expense, 0-100. Seeded
+   * from the category default; overridden per expense for mixed-use spend.
+   */
+  deductiblePercent: number;
+  /** False until you have confirmed the category -- the import review queue. */
+  reviewed: boolean;
+  /** Whether a receipt exists, and where. Substantiation is the weak point. */
+  receiptNote: string;
+  source: 'manual' | 'import' | 'card-fee';
+  /**
+   * Stable identity for an imported row (date + amount + merchant), so
+   * re-importing an overlapping statement updates rather than duplicates.
+   */
+  importKey: string | null;
+  notes: string;
+};
+
+/**
+ * A merchant pattern that files an expense automatically on import.
+ *
+ * Substring match on the merchant text, most recently added first. These are
+ * seeded with common cases and grow as you categorise: filing an imported row
+ * offers to remember the merchant, which is what stops the second import being
+ * as much work as the first.
+ */
+export type CategorizationRule = {
+  id: string;
+  /** Case-insensitive substring of the merchant/description text. */
+  match: string;
+  categoryId: string;
+  /** Optional -- a rule can set the category without forcing an entity. */
+  entityId: string | null;
+  deductiblePercent: number | null;
+  /** True for the shipped rules, so they can be told apart from yours. */
+  builtIn: boolean;
+};
+
 export type ThemePreference = 'system' | 'light' | 'dark';
 
 export type Settings = {
@@ -114,12 +185,18 @@ export type Settings = {
   feeReviewLeadDays: number;
   /** Flag a bonus deadline this many days out. */
   bonusWarnDays: number;
+  /** The tax year the expense views open on. */
+  activeTaxYear: number;
+  /** Which entity a new expense defaults to. */
+  defaultEntityId: string | null;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
   feeReviewLeadDays: 45,
   bonusWarnDays: 30,
+  activeTaxYear: new Date().getFullYear(),
+  defaultEntityId: null,
 };
 
 export type AppData = {
@@ -132,19 +209,37 @@ export type AppData = {
    * a number you actually got.
    */
   valuationOverrides: Record<string, number>;
+  entities: Entity[];
+  expenses: Expense[];
+  categorizationRules: CategorizationRule[];
   settings: Settings;
   updatedAt: string;
 };
 
-export const DATA_VERSION = 1;
+export const DATA_VERSION = 2;
+
+/**
+ * Seeded so the expense views have somewhere to put things on day one. Rename
+ * or delete them in Settings -- nothing depends on these ids.
+ */
+export function defaultEntities(): Entity[] {
+  return [
+    { id: 'entity-locusstock', name: 'LocusStock', kind: 'business', notes: '' },
+    { id: 'entity-personal', name: 'Personal', kind: 'personal', notes: '' },
+  ];
+}
 
 export function emptyData(): AppData {
+  const entities = defaultEntities();
   return {
     version: DATA_VERSION,
     cards: [],
     balances: [],
     valuationOverrides: {},
-    settings: { ...DEFAULT_SETTINGS },
+    entities,
+    expenses: [],
+    categorizationRules: [],
+    settings: { ...DEFAULT_SETTINGS, defaultEntityId: entities[0].id },
     updatedAt: new Date().toISOString(),
   };
 }

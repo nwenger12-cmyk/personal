@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useData } from '@/components/DataProvider';
+import { EntitySettings } from '@/components/EntitySettings';
 import { Button, Checkbox, Field, Note, Panel, PanelHeader, Select, TextInput } from '@/components/ui';
 import { formatCpp, parseIntegerInput } from '@/lib/money';
 import { PROGRAMS, centsPerPoint, valuationKey } from '@/lib/programs';
@@ -111,6 +112,8 @@ export default function SettingsPage() {
           </Field>
         </div>
       </Panel>
+
+      <EntitySettings />
 
       <Panel className="space-y-4">
         <PanelHeader

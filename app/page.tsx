@@ -11,6 +11,7 @@ import { activeBonuses, outstandingSpendCents, pendingRewards } from '@/lib/bonu
 import { formatDate, relativeDays, today } from '@/lib/dates';
 import { feeTotals, upcomingFees } from '@/lib/fees';
 import { formatCents, formatDollars, formatNumber } from '@/lib/money';
+import { taxSummary, taxYearOf } from '@/lib/expenses';
 import { balanceViews, totalValueCents } from '@/lib/points';
 import { fiveTwentyFour } from '@/lib/rules';
 import { sampleData } from '@/lib/sample';
@@ -33,8 +34,23 @@ export default function DashboardPage() {
       pointsValue: totalValueCents(balances),
       timeline: buildTimeline(cards, settings, 12, now),
       five24: fiveTwentyFour(cards, now),
+      spending: (() => {
+        const year = Number(now.slice(0, 4));
+        const inYear = data.expenses.filter((e) => taxYearOf(e) === year);
+        const summary = taxSummary(data.expenses, data.entities, year);
+        return {
+          year,
+          grossCents: inYear.reduce((sum, e) => sum + e.amountCents, 0),
+          deductibleCents: summary.entities
+            .filter((e) => e.entity.kind === 'business')
+            .reduce((sum, e) => sum + e.deductibleCents, 0),
+          count: inYear.length,
+          needsReview: inYear.filter((e) => !e.reviewed).length,
+          uncategorized: summary.uncategorizedCount,
+        };
+      })(),
     };
-  }, [cards, data.balances, data.valuationOverrides, settings]);
+  }, [cards, data.balances, data.valuationOverrides, data.expenses, data.entities, settings]);
 
   if (!ready) {
     return <p className="text-sm text-dim">Loading your cards...</p>;
@@ -46,10 +62,10 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-text">Card Hub</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-            One place for the three things that cost real money if you forget
-            them: when each annual fee posts, how much spend is left on a
-            sign-up bonus before the window shuts, and what the points you are
-            sitting on are actually worth.
+            One place for the things that cost real money if you forget them:
+            when each annual fee posts, how much spend is left on a sign-up
+            bonus before the window shuts, what the points you are sitting on
+            are worth, and where every dollar of spending lands at tax time.
           </p>
         </div>
         <EmptyState
@@ -70,7 +86,9 @@ export default function DashboardPage() {
     );
   }
 
-  const { totals, nextFee, bonuses, outstanding, pending, pointsValue, five24 } = view;
+  const {
+    totals, nextFee, bonuses, outstanding, pending, pointsValue, five24, spending,
+  } = view;
 
   return (
     <div className="space-y-8">
@@ -189,6 +207,47 @@ export default function DashboardPage() {
           <FiveTwentyFourPanel status={five24} />
         </div>
       </div>
+
+      {spending.count > 0 ? (
+        <Panel>
+          <PanelHeader
+            title={`Spending — ${spending.year}`}
+            description="Categorised against the Schedule C line each one lands on, split by entity."
+            action={
+              <Link href="/taxes">
+                <Button size="sm">Tax summary</Button>
+              </Link>
+            }
+          />
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Stat
+              label="Recorded"
+              value={formatDollars(spending.grossCents)}
+              hint={`${spending.count} transactions this year`}
+            />
+            <Stat
+              label="Business deductible"
+              value={formatDollars(spending.deductibleCents)}
+              tone="ok"
+              hint="after each expense's percentage"
+            />
+            <Stat
+              label="Needs review"
+              value={String(spending.needsReview)}
+              tone={spending.needsReview > 0 ? 'warn' : 'ok'}
+              hint={
+                spending.uncategorized > 0 ? (
+                  <Link href="/expenses" className="underline underline-offset-2">
+                    {spending.uncategorized} uncategorised — excluded from totals
+                  </Link>
+                ) : (
+                  'everything is filed'
+                )
+              }
+            />
+          </div>
+        </Panel>
+      ) : null}
 
       {nextFee && nextFee.daysUntil <= settings.feeReviewLeadDays ? (
         <Panel className="border-warn/30 bg-warn/5">

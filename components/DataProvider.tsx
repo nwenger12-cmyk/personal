@@ -11,7 +11,15 @@ import {
 import type { ReactNode } from 'react';
 import { today } from '@/lib/dates';
 import { emptyData } from '@/lib/types';
-import type { AppData, CardAccount, ProgramBalance, Settings } from '@/lib/types';
+import type {
+  AppData,
+  CardAccount,
+  CategorizationRule,
+  Entity,
+  Expense,
+  ProgramBalance,
+  Settings,
+} from '@/lib/types';
 import { loadData, saveData } from '@/lib/storage';
 
 type DataContextValue = {
@@ -25,6 +33,15 @@ type DataContextValue = {
   setBalance: (programId: string, amount: number) => void;
   removeBalance: (programId: string) => void;
   setValuation: (key: string, centsPerPoint: number | null) => void;
+  upsertExpense: (expense: Expense) => void;
+  /** Bulk write for CSV import and for filing a batch from the review queue. */
+  upsertExpenses: (expenses: Expense[]) => void;
+  removeExpense: (expenseId: string) => void;
+  removeExpenses: (expenseIds: string[]) => void;
+  upsertEntity: (entity: Entity) => void;
+  removeEntity: (entityId: string) => void;
+  addRule: (rule: CategorizationRule) => void;
+  removeRule: (ruleId: string) => void;
   updateSettings: (patch: Partial<Settings>) => void;
   replaceAll: (data: AppData) => void;
   resetAll: () => void;
@@ -114,6 +131,125 @@ export function DataProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+
+  const upsertExpense = useCallback((expense: Expense) => {
+    setData((current) => {
+      const index = current.expenses.findIndex((e) => e.id === expense.id);
+      const expenses =
+        index === -1
+          ? [...current.expenses, expense]
+          : current.expenses.map((e) => (e.id === expense.id ? expense : e));
+      const next = { ...current, expenses };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
+  /**
+   * One write for a whole batch. An import of 200 rows through the single
+   * upsert would be 200 renders and 200 localStorage writes; this is one of
+   * each, and the id map keeps it linear rather than quadratic.
+   */
+  const upsertExpenses = useCallback((incoming: Expense[]) => {
+    if (incoming.length === 0) return;
+    setData((current) => {
+      const byId = new Map(current.expenses.map((e) => [e.id, e]));
+      for (const expense of incoming) byId.set(expense.id, expense);
+      const next = { ...current, expenses: [...byId.values()] };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
+  const removeExpense = useCallback((expenseId: string) => {
+    setData((current) => {
+      const next = {
+        ...current,
+        expenses: current.expenses.filter((e) => e.id !== expenseId),
+      };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
+  const removeExpenses = useCallback((expenseIds: string[]) => {
+    if (expenseIds.length === 0) return;
+    setData((current) => {
+      const drop = new Set(expenseIds);
+      const next = {
+        ...current,
+        expenses: current.expenses.filter((e) => !drop.has(e.id)),
+      };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
+  const upsertEntity = useCallback((entity: Entity) => {
+    setData((current) => {
+      const index = current.entities.findIndex((e) => e.id === entity.id);
+      const entities =
+        index === -1
+          ? [...current.entities, entity]
+          : current.entities.map((e) => (e.id === entity.id ? entity : e));
+      const next = { ...current, entities };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
+  /**
+   * Deleting an entity moves its expenses to whatever entity remains rather
+   * than deleting them. Losing a year of categorised spend because an entity
+   * was renamed the hard way is not a recoverable mistake.
+   */
+  const removeEntity = useCallback((entityId: string) => {
+    setData((current) => {
+      if (current.entities.length <= 1) return current;
+      const entities = current.entities.filter((e) => e.id !== entityId);
+      const fallback = entities[0].id;
+      const expenses = current.expenses.map((e) =>
+        e.entityId === entityId ? { ...e, entityId: fallback } : e,
+      );
+      const next = {
+        ...current,
+        entities,
+        expenses,
+        settings: {
+          ...current.settings,
+          defaultEntityId:
+            current.settings.defaultEntityId === entityId
+              ? fallback
+              : current.settings.defaultEntityId,
+        },
+      };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
+  const addRule = useCallback((rule: CategorizationRule) => {
+    setData((current) => {
+      const next = {
+        ...current,
+        categorizationRules: [...current.categorizationRules, rule],
+      };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
+  const removeRule = useCallback((ruleId: string) => {
+    setData((current) => {
+      const next = {
+        ...current,
+        categorizationRules: current.categorizationRules.filter((r) => r.id !== ruleId),
+      };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
   const updateSettings = useCallback((patch: Partial<Settings>) => {
     setData((current) => {
       const next = { ...current, settings: { ...current.settings, ...patch } };
@@ -144,13 +280,23 @@ export function DataProvider({ children }: { children: ReactNode }) {
       setBalance,
       removeBalance,
       setValuation,
+      upsertExpense,
+      upsertExpenses,
+      removeExpense,
+      removeExpenses,
+      upsertEntity,
+      removeEntity,
+      addRule,
+      removeRule,
       updateSettings,
       replaceAll,
       resetAll,
     }),
     [
       data, ready, persistFailed, upsertCard, removeCard, setBalance,
-      removeBalance, setValuation, updateSettings, replaceAll, resetAll,
+      removeBalance, setValuation, upsertExpense, upsertExpenses, removeExpense,
+      removeExpenses, upsertEntity, removeEntity, addRule, removeRule,
+      updateSettings, replaceAll, resetAll,
     ],
   );
 
