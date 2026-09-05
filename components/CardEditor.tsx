@@ -6,10 +6,21 @@ import { formatDate, isIsoDate, today } from '@/lib/dates';
 import { bonusDeadline } from '@/lib/bonuses';
 import { feeOutlook } from '@/lib/fees';
 import { centsToInput, formatCents, parseDollarsToCents, parseIntegerInput } from '@/lib/money';
+import { EARN_CATEGORIES } from '@/lib/earning';
+import { PERK_PERIOD_LABELS, annualPerkValueCents } from '@/lib/perks';
 import { PROGRAMS } from '@/lib/programs';
 import { applyCatalogCard, blankBonus, newId } from '@/lib/storage';
 import { ISSUER_LABELS, ISSUER_ORDER } from '@/lib/types';
-import type { CardAccount, FeeCharge, Issuer, SignupBonus } from '@/lib/types';
+import type {
+  CardAccount,
+  EarnRate,
+  FeeCharge,
+  Issuer,
+  Perk,
+  PerkPeriod,
+  RetentionOffer,
+  SignupBonus,
+} from '@/lib/types';
 import { Badge, Button, Checkbox, Field, Note, Panel, Select, TextInput } from './ui';
 
 /**
@@ -84,6 +95,17 @@ export function CardEditor({
       status: card.closedDate ? 'closed' : card.status,
     });
   }
+
+  const patchPerk = (id: string, changes: Partial<Perk>) =>
+    patch({ perks: card.perks.map((p) => (p.id === id ? { ...p, ...changes } : p)) });
+
+  const patchRate = (id: string, changes: Partial<EarnRate>) =>
+    patch({ earnRates: card.earnRates.map((r) => (r.id === id ? { ...r, ...changes } : r)) });
+
+  const patchOffer = (id: string, changes: Partial<RetentionOffer>) =>
+    patch({
+      retentionOffers: card.retentionOffers.map((o) => (o.id === id ? { ...o, ...changes } : o)),
+    });
 
   function addFeeCharge() {
     const charge: FeeCharge = {
@@ -584,6 +606,248 @@ export function CardEditor({
             </div>
           </div>
         )}
+      </div>
+
+      {/* ---- credits and perks ------------------------------------------- */}
+      <div className="space-y-4">
+        <SectionTitle hint="Tracked per period, because that is how they are lost -- a monthly credit unused in March is gone in April, not carried forward.">
+          Credits & perks
+        </SectionTitle>
+
+        {card.perks.length === 0 ? (
+          <p className="text-sm text-dim">None recorded.</p>
+        ) : (
+          <ul className="space-y-2">
+            {card.perks.map((perk) => (
+              <li key={perk.id} className="grid gap-2 rounded-xl bg-surface-2/50 p-3 ring-1 ring-line sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end">
+                <Field label="What it is">
+                  <TextInput
+                    value={perk.label}
+                    onChange={(e) => patchPerk(perk.id, { label: e.target.value })}
+                    placeholder="$15 Uber Cash"
+                  />
+                </Field>
+                <Field label="Value per period">
+                  <TextInput
+                    mono
+                    inputMode="decimal"
+                    value={centsToInput(perk.valueCents)}
+                    onChange={(e) =>
+                      patchPerk(perk.id, { valueCents: parseDollarsToCents(e.target.value) ?? 0 })
+                    }
+                  />
+                </Field>
+                <Field label="How often">
+                  <Select
+                    value={perk.period}
+                    onChange={(e) => patchPerk(perk.id, { period: e.target.value as PerkPeriod })}
+                  >
+                    {(Object.keys(PERK_PERIOD_LABELS) as PerkPeriod[]).map((period) => (
+                      <option key={period} value={period}>
+                        {PERK_PERIOD_LABELS[period]}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+                <div className="pb-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => patch({ perks: card.perks.filter((p) => p.id !== perk.id) })}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            size="sm"
+            onClick={() =>
+              patch({
+                perks: [
+                  ...card.perks,
+                  { id: newId(), label: '', valueCents: 0, period: 'monthly', usedPeriods: [], notes: '' } as Perk,
+                ],
+              })
+            }
+          >
+            Add a credit
+          </Button>
+          {card.perks.length > 0 ? (
+            <span className="text-xs text-dim">
+              Worth{' '}
+              <span className="font-mono text-text">{formatCents(annualPerkValueCents(card))}</span>{' '}
+              a year if every period is used. Tick them off on the Cards page.
+            </span>
+          ) : null}
+        </div>
+      </div>
+
+      {/* ---- earning rates ------------------------------------------------- */}
+      <div className="space-y-4">
+        <SectionTitle hint="Used to work out which card to reach for. A multiplier only means something next to what the point is worth, so these are compared in cents per dollar.">
+          Earning rates
+        </SectionTitle>
+
+        {card.earnRates.length === 0 ? (
+          <p className="text-sm text-dim">
+            None recorded — this card is assumed to earn 1x everywhere.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {card.earnRates.map((rate) => (
+              <li key={rate.id} className="grid gap-2 rounded-xl bg-surface-2/50 p-3 ring-1 ring-line sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end">
+                <Field label="Category">
+                  <Select
+                    value={rate.categoryId}
+                    onChange={(e) => patchRate(rate.id, { categoryId: e.target.value })}
+                  >
+                    {EARN_CATEGORIES.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.label}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+                <Field label="Multiplier">
+                  <TextInput
+                    mono
+                    inputMode="decimal"
+                    value={String(rate.multiplier)}
+                    onChange={(e) => {
+                      const value = Number(e.target.value.replace(/[^\d.]/g, ''));
+                      patchRate(rate.id, {
+                        multiplier: Number.isFinite(value) ? value : 0,
+                      });
+                    }}
+                  />
+                </Field>
+                <Field label="Annual cap" hint="Blank if uncapped.">
+                  <TextInput
+                    mono
+                    inputMode="decimal"
+                    value={rate.capCents === null ? '' : centsToInput(rate.capCents)}
+                    onChange={(e) =>
+                      patchRate(rate.id, { capCents: parseDollarsToCents(e.target.value) })
+                    }
+                  />
+                </Field>
+                <div className="pb-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() =>
+                      patch({ earnRates: card.earnRates.filter((r) => r.id !== rate.id) })
+                    }
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <Button
+          size="sm"
+          onClick={() =>
+            patch({
+              earnRates: [
+                ...card.earnRates,
+                { id: newId(), categoryId: 'everything', multiplier: 1, capCents: null, notes: '' } as EarnRate,
+              ],
+            })
+          }
+        >
+          Add a rate
+        </Button>
+      </div>
+
+      {/* ---- retention offers ---------------------------------------------- */}
+      <div className="space-y-4">
+        <SectionTitle hint="Logged so the next call has last year's number to hand -- what they offered, and whether you took it.">
+          Retention offers
+        </SectionTitle>
+
+        {card.retentionOffers.length === 0 ? (
+          <p className="text-sm text-dim">None logged.</p>
+        ) : (
+          <ul className="space-y-2">
+            {card.retentionOffers
+              .slice()
+              .sort((a, b) => (a.date < b.date ? 1 : -1))
+              .map((offer) => (
+                <li key={offer.id} className="grid gap-2 rounded-xl bg-surface-2/50 p-3 ring-1 ring-line sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)_auto] sm:items-end">
+                  <Field label="When">
+                    <TextInput
+                      type="date"
+                      value={offer.date}
+                      onChange={(e) => patchOffer(offer.id, { date: e.target.value })}
+                    />
+                  </Field>
+                  <Field label="What they offered">
+                    <TextInput
+                      value={offer.description}
+                      onChange={(e) => patchOffer(offer.id, { description: e.target.value })}
+                      placeholder="$95 statement credit, or 10k points"
+                    />
+                  </Field>
+                  <Field label="Value">
+                    <TextInput
+                      mono
+                      inputMode="decimal"
+                      value={centsToInput(offer.valueCents)}
+                      onChange={(e) =>
+                        patchOffer(offer.id, {
+                          valueCents: parseDollarsToCents(e.target.value) ?? 0,
+                        })
+                      }
+                    />
+                  </Field>
+                  <div className="flex items-center gap-2 pb-1">
+                    <label className="flex items-center gap-1.5 text-xs text-muted">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 accent-[rgb(var(--accent))]"
+                        checked={offer.accepted}
+                        onChange={(e) => patchOffer(offer.id, { accepted: e.target.checked })}
+                      />
+                      Took it
+                    </label>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() =>
+                        patch({
+                          retentionOffers: card.retentionOffers.filter((o) => o.id !== offer.id),
+                        })
+                      }
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        )}
+
+        <Button
+          size="sm"
+          onClick={() =>
+            patch({
+              retentionOffers: [
+                ...card.retentionOffers,
+                { id: newId(), date: today(), description: '', valueCents: 0, points: 0, accepted: false } as RetentionOffer,
+              ],
+            })
+          }
+        >
+          Log an offer
+        </Button>
       </div>
 
       {/* ---- notes -------------------------------------------------------- */}

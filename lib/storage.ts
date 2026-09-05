@@ -14,11 +14,16 @@ import type {
   AppData,
   CardAccount,
   CategorizationRule,
+  EarnRate,
   Entity,
   Expense,
   FeeCharge,
   Issuer,
+  MileageTrip,
+  Perk,
+  PerkPeriod,
   ProgramBalance,
+  RetentionOffer,
   Settings,
   SignupBonus,
 } from './types';
@@ -115,6 +120,87 @@ function coerceFeeHistory(value: unknown): FeeCharge[] {
   });
 }
 
+const PERK_PERIODS: PerkPeriod[] = ['monthly', 'quarterly', 'semiannual', 'annual'];
+
+function coercePerks(value: unknown): Perk[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry): Perk[] => {
+    if (!entry || typeof entry !== 'object') return [];
+    const p = entry as Record<string, unknown>;
+    return [{
+      id: str(p.id) || newId(),
+      label: str(p.label, 'Credit'),
+      valueCents: Math.max(0, Math.round(num(p.valueCents))),
+      period: PERK_PERIODS.includes(p.period as PerkPeriod)
+        ? (p.period as PerkPeriod)
+        : 'annual',
+      usedPeriods: Array.isArray(p.usedPeriods)
+        ? [...new Set(p.usedPeriods.filter((k): k is string => typeof k === 'string'))]
+        : [],
+      notes: str(p.notes),
+    }];
+  });
+}
+
+function coerceEarnRates(value: unknown): EarnRate[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry): EarnRate[] => {
+    if (!entry || typeof entry !== 'object') return [];
+    const r = entry as Record<string, unknown>;
+    const categoryId = str(r.categoryId);
+    if (!categoryId) return [];
+    return [{
+      id: str(r.id) || newId(),
+      categoryId,
+      multiplier: Math.max(0, num(r.multiplier, 1)),
+      capCents:
+        typeof r.capCents === 'number' && Number.isFinite(r.capCents) && r.capCents > 0
+          ? Math.round(r.capCents)
+          : null,
+      notes: str(r.notes),
+    }];
+  });
+}
+
+function coerceRetentionOffers(value: unknown): RetentionOffer[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry): RetentionOffer[] => {
+    if (!entry || typeof entry !== 'object') return [];
+    const o = entry as Record<string, unknown>;
+    const when = nullableDate(o.date);
+    if (!when) return [];
+    return [{
+      id: str(o.id) || newId(),
+      date: when,
+      description: str(o.description),
+      valueCents: Math.max(0, Math.round(num(o.valueCents))),
+      points: Math.max(0, Math.round(num(o.points))),
+      accepted: bool(o.accepted),
+    }];
+  });
+}
+
+function coerceMileage(value: unknown, entities: Entity[]): MileageTrip[] {
+  if (!Array.isArray(value)) return [];
+  const ids = new Set(entities.map((e) => e.id));
+  const fallback = entities[0]?.id ?? '';
+  return value.flatMap((entry): MileageTrip[] => {
+    if (!entry || typeof entry !== 'object') return [];
+    const t = entry as Record<string, unknown>;
+    const when = nullableDate(t.date);
+    if (!when) return [];
+    return [{
+      id: str(t.id) || newId(),
+      date: when,
+      miles: Math.max(0, num(t.miles)),
+      purpose: str(t.purpose),
+      route: str(t.route),
+      entityId:
+        typeof t.entityId === 'string' && ids.has(t.entityId) ? t.entityId : fallback,
+    }];
+  });
+}
+
 function coerceCard(value: unknown): CardAccount | null {
   if (!value || typeof value !== 'object') return null;
   const c = value as Record<string, unknown>;
@@ -143,6 +229,9 @@ function coerceCard(value: unknown): CardAccount | null {
     annualCreditsValueCents: Math.max(0, Math.round(num(c.annualCreditsValueCents))),
     bonus: coerceBonus(c.bonus, openedDate),
     feeHistory: coerceFeeHistory(c.feeHistory),
+    perks: coercePerks(c.perks),
+    earnRates: coerceEarnRates(c.earnRates),
+    retentionOffers: coerceRetentionOffers(c.retentionOffers),
     notes: str(c.notes),
   };
 }
@@ -160,6 +249,7 @@ function coerceBalances(value: unknown): ProgramBalance[] {
       programId,
       amount: Math.max(0, Math.round(num(b.amount))),
       updated: date(b.updated, today()),
+      lastActivity: nullableDate(b.lastActivity),
     }];
   });
 }
@@ -285,6 +375,14 @@ function coerceSettings(value: unknown, entities: Entity[]): Settings {
       entities.some((e) => e.id === s.defaultEntityId)
         ? s.defaultEntityId
         : entities[0]?.id ?? null,
+    mileageRateCents: Math.max(
+      0,
+      Math.round(num(s.mileageRateCents, DEFAULT_SETTINGS.mileageRateCents)),
+    ),
+    perkWarnDays: Math.min(
+      120,
+      Math.max(0, Math.round(num(s.perkWarnDays, DEFAULT_SETTINGS.perkWarnDays))),
+    ),
   };
 }
 
@@ -318,6 +416,7 @@ export function coerceData(value: unknown): AppData {
     valuationOverrides: coerceValuations(d.valuationOverrides),
     entities,
     expenses: coerceExpenses(d.expenses, entities),
+    mileage: coerceMileage(d.mileage, entities),
     categorizationRules: coerceRules(d.categorizationRules),
     settings: coerceSettings(d.settings, entities),
     updatedAt: str(d.updatedAt, new Date().toISOString()),
@@ -402,6 +501,9 @@ export function blankCard(openedDate: IsoDate = today()): CardAccount {
     annualCreditsValueCents: 0,
     bonus: null,
     feeHistory: [],
+    perks: [],
+    earnRates: [],
+    retentionOffers: [],
     notes: '',
   };
 }

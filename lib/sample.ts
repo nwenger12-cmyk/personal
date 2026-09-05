@@ -29,18 +29,44 @@ export function sampleData(now: IsoDate = today()): AppData {
     ...extra,
   });
 
+  const rate = (categoryId: string, multiplier: number, capDollars?: number) => ({
+    id: newId(),
+    categoryId,
+    multiplier,
+    capCents: capDollars === undefined ? null : capDollars * 100,
+    notes: '',
+  });
+  const perk = (
+    label: string,
+    dollars: number,
+    period: 'monthly' | 'quarterly' | 'semiannual' | 'annual',
+    usedPeriods: string[] = [],
+  ) => ({ id: newId(), label, valueCents: dollars * 100, period, usedPeriods, notes: '' });
+
   const sapphire = make('chase-sapphire-preferred', 26, {
     nickname: 'Sapphire Preferred',
     last4: '4417',
     annualCreditsValueCents: 5_000,
     notes: 'Hotel credit covers about half the fee if I remember to use it.',
+    earnRates: [rate('everything', 1), rate('dining', 3), rate('online', 3), rate('travel', 2)],
+    perks: [perk('$50 hotel credit', 50, 'annual')],
   });
 
-  const freedom = make('chase-freedom-unlimited', 40, { last4: '9021' });
+  const freedom = make('chase-freedom-unlimited', 40, {
+    last4: '9021',
+    earnRates: [rate('everything', 1.5), rate('dining', 3), rate('drugstores', 3)],
+  });
 
   const inkPreferred = make('chase-ink-preferred', 2, {
     nickname: 'Ink Preferred',
     last4: '7730',
+    earnRates: [
+      rate('everything', 1),
+      rate('advertising', 3, 150_000),
+      rate('shipping', 3, 150_000),
+      rate('travel', 3, 150_000),
+      rate('internet', 3, 150_000),
+    ],
   });
   inkPreferred.bonus = {
     ...blankBonus(inkPreferred),
@@ -56,7 +82,10 @@ export function sampleData(now: IsoDate = today()): AppData {
     notes: 'Q4 contractor invoices should finish this off.',
   };
 
-  const inkCash = make('chase-ink-cash', 14, { last4: '5512' });
+  const inkCash = make('chase-ink-cash', 14, {
+    last4: '5512',
+    earnRates: [rate('everything', 1), rate('office', 5, 25_000), rate('internet', 5, 25_000)],
+  });
   inkCash.bonus = {
     ...blankBonus(inkCash),
     rewardKind: 'points',
@@ -75,6 +104,18 @@ export function sampleData(now: IsoDate = today()): AppData {
     last4: '3308',
     annualCreditsValueCents: 40_000,
     notes: '$300 travel credit plus 10k anniversary miles -- fee is roughly a wash.',
+    earnRates: [rate('everything', 2), rate('hotels', 10), rate('flights', 5)],
+    perks: [perk('$300 travel credit', 300, 'annual')],
+    retentionOffers: [
+      {
+        id: newId(),
+        date: monthsAgo(10, now),
+        description: 'Offered 10,000 bonus miles at sign-up match',
+        valueCents: 14_000,
+        points: 10_000,
+        accepted: true,
+      },
+    ],
   });
   ventureX.bonus = {
     ...blankBonus(ventureX),
@@ -89,15 +130,34 @@ export function sampleData(now: IsoDate = today()): AppData {
     postedDate: monthsAgo(8, now),
   };
 
-  const savor = make('capitalone-savor', 7, { last4: '1180' });
+  const savor = make('capitalone-savor', 7, {
+    last4: '1180',
+    earnRates: [rate('everything', 1), rate('dining', 3), rate('groceries', 3), rate('streaming', 3)],
+  });
 
-  const discover = make('discover-it-cash-back', 30, { last4: '6644' });
+  const discover = make('discover-it-cash-back', 30, {
+    last4: '6644',
+    earnRates: [rate('everything', 1), rate('gas', 5, 1_500)],
+  });
 
-  const united = make('chase-united-explorer', 20, { last4: '2095' });
+  const united = make('chase-united-explorer', 20, {
+    last4: '2095',
+    earnRates: [rate('everything', 1), rate('flights', 2), rate('dining', 2)],
+    perks: [perk('$50 United travel credit', 50, 'semiannual', [])],
+  });
 
   const strata = make('citi-strata-premier', 1, {
     nickname: 'Strata Premier',
     last4: '8871',
+    earnRates: [
+      rate('everything', 1),
+      rate('dining', 3),
+      rate('groceries', 3),
+      rate('gas', 3),
+      rate('flights', 3),
+      rate('hotels', 3),
+    ],
+    perks: [perk('$100 hotel credit', 100, 'annual')],
   });
   strata.bonus = {
     ...blankBonus(strata),
@@ -193,12 +253,30 @@ export function sampleData(now: IsoDate = today()): AppData {
     ],
     entities,
     expenses,
+    mileage: [
+      {
+        id: newId(),
+        date: addDays(now, -19),
+        miles: 214,
+        purpose: 'Location scout — Moab shoot',
+        route: 'Studio → Moab → studio',
+        entityId: locusstock.id,
+      },
+      {
+        id: newId(),
+        date: addDays(now, -47),
+        miles: 38,
+        purpose: 'Client meeting',
+        route: 'Studio → downtown → studio',
+        entityId: locusstock.id,
+      },
+    ],
     categorizationRules: [],
     balances: [
-      { programId: 'chase-ur', amount: 187_400, updated: now },
-      { programId: 'capitalone-miles', amount: 92_000, updated: now },
-      { programId: 'citi-typ', amount: 12_300, updated: now },
-      { programId: 'discover-cashback', amount: 4_215, updated: now },
+      { programId: 'chase-ur', amount: 187_400, updated: now, lastActivity: monthsAgo(1, now) },
+      { programId: 'capitalone-miles', amount: 92_000, updated: now, lastActivity: monthsAgo(2, now) },
+      { programId: 'citi-typ', amount: 12_300, updated: now, lastActivity: now },
+      { programId: 'discover-cashback', amount: 4_215, updated: now, lastActivity: monthsAgo(4, now) },
     ],
     valuationOverrides: {},
     settings: {

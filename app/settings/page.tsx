@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { useData } from '@/components/DataProvider';
 import { EntitySettings } from '@/components/EntitySettings';
 import { Button, Checkbox, Field, Note, Panel, PanelHeader, Select, TextInput } from '@/components/ui';
+import { buildCalendarEvents, toIcs } from '@/lib/calendar';
 import { formatCpp, parseIntegerInput } from '@/lib/money';
 import { PROGRAMS, centsPerPoint, valuationKey } from '@/lib/programs';
 import { sampleData } from '@/lib/sample';
@@ -18,6 +19,18 @@ export default function SettingsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   if (!ready) return <p className="text-sm text-dim">Loading settings...</p>;
+
+  function downloadFile(name: string, contents: string, type: string) {
+    const blob = new Blob([contents], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
 
   function download() {
     const blob = new Blob([exportJson(data)], { type: 'application/json' });
@@ -110,7 +123,63 @@ export default function SettingsPage() {
               }}
             />
           </Field>
+          <Field
+            label="Flag an unused credit this many days before its period closes"
+            hint="A monthly credit unused at month end is gone, so this wants to be short enough to still act on."
+          >
+            <TextInput
+              mono
+              inputMode="numeric"
+              value={String(data.settings.perkWarnDays)}
+              onChange={(e) => {
+                const value = parseIntegerInput(e.target.value);
+                if (value !== null && value >= 0) updateSettings({ perkWarnDays: value });
+              }}
+            />
+          </Field>
+          <Field
+            label="Standard mileage rate (cents per mile)"
+            hint="Set by the IRS and changed every year. Confirm the current figure before filing."
+          >
+            <TextInput
+              mono
+              inputMode="numeric"
+              value={String(data.settings.mileageRateCents)}
+              onChange={(e) => {
+                const value = parseIntegerInput(e.target.value);
+                if (value !== null && value >= 0) updateSettings({ mileageRateCents: value });
+              }}
+            />
+          </Field>
         </div>
+      </Panel>
+
+      <Panel className="space-y-4">
+        <PanelHeader
+          title="Reminders"
+          description="Push notifications need a server, an account and a device token. A calendar file needs none of those and lands in the calendar you already check every morning."
+        />
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            onClick={() =>
+              downloadFile(
+                'card-hub.ics',
+                toIcs(buildCalendarEvents(data)),
+                'text/calendar',
+              )
+            }
+          >
+            Download calendar (.ics)
+          </Button>
+          <span className="text-xs text-dim">
+            {buildCalendarEvents(data).length} dated events — fees, the decision date
+            before each one, bonus deadlines, unused credits, and eligibility clocks.
+          </span>
+        </div>
+        <Note>
+          This is a snapshot, not a subscription: import it again after anything
+          that moves a date. Each event carries a one-day alarm.
+        </Note>
       </Panel>
 
       <EntitySettings />

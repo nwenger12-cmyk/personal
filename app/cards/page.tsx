@@ -5,6 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useData } from '@/components/DataProvider';
 import { CardEditor } from '@/components/CardEditor';
 import { CardList } from '@/components/CardList';
+import { EligibilityPanel } from '@/components/EligibilityPanel';
+import { PerkChecklist } from '@/components/PerkChecklist';
+import { WalletCheatSheet } from '@/components/WalletCheatSheet';
 import { Button, EmptyState, Panel, PanelHeader, Stat, StatRow } from '@/components/ui';
 import { feeTotals } from '@/lib/fees';
 import { formatDollars } from '@/lib/money';
@@ -132,6 +135,12 @@ function CardsPageInner() {
           <Panel>
             <CardList cards={visible} settings={data.settings} onEdit={setEditing} />
           </Panel>
+
+          <WalletCheatSheet cards={data.cards} overrides={data.valuationOverrides} />
+
+          <PerkChecklist cards={data.cards} onToggle={upsertCard} />
+
+          <EligibilityPanel cards={data.cards} />
 
           <Panel>
             <PanelHeader

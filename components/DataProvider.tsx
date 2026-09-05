@@ -17,6 +17,7 @@ import type {
   CategorizationRule,
   Entity,
   Expense,
+  MileageTrip,
   ProgramBalance,
   Settings,
 } from '@/lib/types';
@@ -42,6 +43,8 @@ type DataContextValue = {
   removeEntity: (entityId: string) => void;
   addRule: (rule: CategorizationRule) => void;
   removeRule: (ruleId: string) => void;
+  addTrip: (trip: MileageTrip) => void;
+  removeTrip: (tripId: string) => void;
   updateSettings: (patch: Partial<Settings>) => void;
   replaceAll: (data: AppData) => void;
   resetAll: () => void;
@@ -94,10 +97,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const setBalance = useCallback((programId: string, amount: number) => {
     setData((current) => {
+      const previous = current.balances.find((b) => b.programId === programId);
       const entry: ProgramBalance = {
         programId,
         amount: Math.max(0, Math.round(amount)),
         updated: today(),
+        // A changed balance means the account saw activity, which is what
+        // resets an expiry clock -- re-typing the same number does not.
+        lastActivity:
+          previous && previous.amount === Math.max(0, Math.round(amount))
+            ? previous.lastActivity
+            : today(),
       };
       const exists = current.balances.some((b) => b.programId === programId);
       const balances = exists
@@ -250,6 +260,22 @@ export function DataProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const addTrip = useCallback((trip: MileageTrip) => {
+    setData((current) => {
+      const next = { ...current, mileage: [...current.mileage, trip] };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
+  const removeTrip = useCallback((tripId: string) => {
+    setData((current) => {
+      const next = { ...current, mileage: current.mileage.filter((t) => t.id !== tripId) };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
   const updateSettings = useCallback((patch: Partial<Settings>) => {
     setData((current) => {
       const next = { ...current, settings: { ...current.settings, ...patch } };
@@ -302,6 +328,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       removeEntity,
       addRule,
       removeRule,
+      addTrip,
+      removeTrip,
       updateSettings,
       replaceAll,
       resetAll,
@@ -310,7 +338,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       data, ready, persistFailed, upsertCard, removeCard, setBalance,
       removeBalance, setValuation, upsertExpense, upsertExpenses, removeExpense,
       removeExpenses, upsertEntity, removeEntity, addRule, removeRule,
-      updateSettings, replaceAll, resetAll,
+      addTrip, removeTrip, updateSettings, replaceAll, resetAll,
     ],
   );
 

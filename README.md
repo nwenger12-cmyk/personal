@@ -12,11 +12,59 @@ A personal dashboard for the things that cost real money if you forget them:
 - **Spending** — every transaction categorised against the Schedule C line it
   lands on, split by business, and totalled for the tax year.
 
-Plus a **Chase 5/24 counter** computed from your own card list, since that is
-the constraint that decides what you can apply for next.
+Plus the things that decide what you can apply for and which card to pull out:
+a **Chase 5/24 counter**, **bonus eligibility clocks**, and a **which-card-to-use**
+ranking.
 
 Everything lives in your browser. There is no server, no account, and nothing
 is sent anywhere.
+
+## Cards
+
+**Which card to use.** Every open card, ranked for a spending category by what
+you actually get back per dollar — the multiplier times what a point is worth
+in that programme. That comparison is the whole point: 3x Chase points at 1.8c
+returns 5.4c per dollar, and 2% cash back returns 2c, and a multiplier alone
+cannot tell you that. Type a merchant and it guesses the category. Because the
+valuations are yours to edit, so is the ranking.
+
+**Credits and perks, per period.** A monthly credit is not one benefit worth
+$180 a year — it is twelve separate ones, each of which vanishes if the month
+closes unused. So every period is its own checkbox, the unused total is on the
+card, and one about to expire is flagged. Annual, semiannual, quarterly and
+monthly periods are all supported.
+
+**Bonus eligibility clocks.** Issuers gate a repeat bonus on when you last
+*earned* one, not when you opened or closed the card. Computed from your own
+bonus history: the Chase Sapphire pair as one 48-month family, Ink per product,
+the Citi ThankYou family, Capital One's Venture line, and Amex once per product
+for life. Like 5/24 this is community-documented behaviour, so treat a date as
+a prompt to check.
+
+**Retention offers**, logged with what was offered and whether you took it, so
+next year's call has last year's number to hand.
+
+**Dormant card warnings.** Issuers close accounts that sit unused, and a closed
+card takes its age and its limit with it. A card with no activity in about a
+year gets flagged.
+
+## Points
+
+**Expiry.** Transferable currencies mostly do not expire while an account is
+open — the real risk is closing your last card in the programme and forfeiting
+the lot. Hotel programmes are the opposite: Hyatt, Marriott and IHG expire on
+inactivity, and any qualifying transaction resets the clock. Both are tracked,
+and they are different warnings. Activity date is kept separately from when you
+last *looked* at the balance, because it is activity that resets the clock.
+
+## Reminders
+
+**Calendar export (.ics).** Push notifications need a server, an account and a
+device token. A calendar file needs none of those and lands in the calendar you
+already check every morning. The export covers annual fees, the decision date
+before each one, bonus deadlines, unused credits, and eligibility clocks — each
+as an all-day event with a one-day alarm. It is a snapshot, not a subscription,
+so re-import after anything that moves a date.
 
 ## The interface
 
@@ -230,6 +278,18 @@ decide whether it was right.
 Annual fees you have already recorded against a card can be pulled into the
 expense list as bank and card fees in one click, rather than typed twice.
 
+**Mileage log.** Business miles at the standard rate, which the IRS sets and
+changes every year — so it is a setting to confirm before filing, not a
+constant. The log matters as much as the total: the substantiation rules want
+date, miles and business purpose recorded at the time, and a mileage claim
+without them is the classic audit loss, so trips missing a purpose are flagged.
+You take the standard rate or actual vehicle costs, never both.
+
+**Contractor / 1099 watch.** Pay a contractor $600 or more in a year and a
+1099-NEC is likely owed. Contract-labor spend is grouped by vendor and entity
+and flagged at the threshold — a prompt to check whether the form falls to you
+or to the payment processor, not a filing list.
+
 **Exports.** Two CSVs: the line totals for the return itself, and every
 transaction behind them — with gross, percentage, and deductible amount as
 separate columns, so whoever signs the return can see the judgement that was
@@ -282,6 +342,30 @@ lib/
   categories.ts expense categories mapped to Schedule C lines
   categorize.ts merchant rules for filing imported rows
   expenses.ts   tax-year totals, entity splits, CSV exports
+  earning.ts    category multipliers priced in cents per dollar
+  perks.ts      recurring credits, tracked per period
+  eligibility.ts when each bonus clock runs out
+  mileage.ts    the standard-rate mileage log
+  vendors.ts    contractors over the 1099 threshold
+  calendar.ts   the .ics export
   storage.ts    localStorage, validation, import/export
-tests/          185 tests over the math above
+tests/          231 tests over the math above
 ```
+
+## Deliberately not built
+
+Comparable apps have these; each was left out for a reason rather than
+forgotten.
+
+- **Receipt image storage.** Files would have to live in `localStorage` as
+  base64, which blows the quota after a handful of photos and would make the
+  export unusable. The receipt field records *where* a receipt lives instead.
+- **Splitting one transaction across categories or entities.** Genuinely useful
+  and genuinely fiddly; worth doing properly rather than bolting on.
+- **Quarterly estimated tax.** Needs income, and this app only tracks spending.
+  Half the calculation would be worse than none.
+- **Credit score tracking.** Needs a bureau connection, which means credentials.
+- **Household / second-player tracking.** The data model assumes one person; it
+  would want its own pass.
+- **Automatic push notifications.** Needs a server and an account. The calendar
+  export is the honest substitute.

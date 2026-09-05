@@ -21,6 +21,21 @@ export type Redemption = {
   note: string;
 };
 
+/**
+ * How a balance can be lost.
+ *
+ * Transferable currencies mostly do not expire while an account is open and in
+ * good standing -- the real risk there is closing your last card in the
+ * programme, which forfeits the lot. Hotel programmes are the opposite: they
+ * expire on inactivity, and a small transaction resets the clock. Both are
+ * worth warning about, but they are different warnings.
+ */
+export type Expiry = {
+  /** Months of no earning or redeeming before the balance is forfeited. */
+  inactivityMonths: number | null;
+  note: string;
+};
+
 export type Program = {
   id: string;
   name: string;
@@ -30,6 +45,7 @@ export type Program = {
   pools: boolean;
   redemptions: Redemption[];
   transferPartners: string[];
+  expiry: Expiry;
   note: string;
 };
 
@@ -48,6 +64,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'Chase UR',
     unit: 'points',
     pools: true,
+    expiry: {
+      inactivityMonths: null,
+      note:
+        'Do not expire while a Chase card in the programme stays open. Closing your last one forfeits the balance, so transfer out before you cancel.',
+    },
     note:
       'Points pool across every Chase card on the same login, personal and business alike. ' +
       'A no-fee Freedom or Ink only earns full-value points while you also hold a ' +
@@ -83,6 +104,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'C1 Miles',
     unit: 'miles',
     pools: true,
+    expiry: {
+      inactivityMonths: null,
+      note:
+        'Do not expire while the account is open. Closing the account forfeits them.',
+    },
     note: 'Miles pool across your Capital One cards.',
     redemptions: [
       {
@@ -122,6 +148,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'Citi TYP',
     unit: 'points',
     pools: true,
+    expiry: {
+      inactivityMonths: null,
+      note:
+        'Survive while a ThankYou card stays open. Closing your last one starts a short window to use them, then they are gone.',
+    },
     note: 'Points pool across your Citi ThankYou cards.',
     redemptions: [
       CASH,
@@ -155,6 +186,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'Amex MR',
     unit: 'points',
     pools: true,
+    expiry: {
+      inactivityMonths: null,
+      note:
+        'Do not expire while an account is open and in good standing. Closing every Membership Rewards card forfeits the balance.',
+    },
     note: 'Points pool across your Membership Rewards cards.',
     redemptions: [
       {
@@ -194,6 +230,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'Discover',
     unit: 'cash',
     pools: true,
+    expiry: {
+      inactivityMonths: null,
+      note:
+        'Do not expire while the account is open, and are paid out if Discover closes it.',
+    },
     note:
       'Plain dollars, not a transferable currency. Tracked here so the total ' +
       'sitting unredeemed across your cards is visible in one place.',
@@ -206,6 +247,10 @@ export const PROGRAMS: Program[] = [
     shortName: 'Cash',
     unit: 'cash',
     pools: false,
+    expiry: {
+      inactivityMonths: null,
+      note: 'Depends on the issuer; most pay out rather than expire.',
+    },
     note: 'A generic bucket for any card that pays straight cash back.',
     redemptions: [CASH],
     transferPartners: [],
@@ -216,6 +261,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'United',
     unit: 'miles',
     pools: true,
+    expiry: {
+      inactivityMonths: null,
+      note:
+        'MileagePlus miles do not expire.',
+    },
     note: 'Co-brand currency. Chase UR transfers in 1:1.',
     redemptions: [
       {
@@ -234,6 +284,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'Southwest',
     unit: 'points',
     pools: true,
+    expiry: {
+      inactivityMonths: null,
+      note:
+        'Rapid Rewards points do not expire.',
+    },
     note:
       'Fare-linked, so the value is stable and easy to check. Chase UR ' +
       'transfers in 1:1, and the Companion Pass is the real prize here.',
@@ -254,6 +309,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'Hyatt',
     unit: 'points',
     pools: true,
+    expiry: {
+      inactivityMonths: 24,
+      note:
+        'Expire after 24 months with no earning or redeeming. Any qualifying activity resets the clock.',
+    },
     note: 'The strongest Chase UR transfer partner on a cents-per-point basis.',
     redemptions: [
       {
@@ -272,6 +332,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'Marriott',
     unit: 'points',
     pools: true,
+    expiry: {
+      inactivityMonths: 24,
+      note:
+        'Expire after 24 months of inactivity. A small earn resets the clock.',
+    },
     note: 'Lots of points, each worth little. Chase UR transfers in 1:1.',
     redemptions: [
       {
@@ -290,6 +355,11 @@ export const PROGRAMS: Program[] = [
     shortName: 'IHG',
     unit: 'points',
     pools: true,
+    expiry: {
+      inactivityMonths: 24,
+      note:
+        'Expire after 24 months of inactivity.',
+    },
     note: 'Low per-point value; the Premier card free night is the draw.',
     redemptions: [
       {

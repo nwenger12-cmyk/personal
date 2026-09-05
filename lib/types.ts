@@ -32,6 +32,71 @@ export const ISSUER_ORDER: Issuer[] = [
 
 export type CardStatus = 'open' | 'closed';
 
+/**
+ * A recurring credit or perk attached to a card -- the $15 a month of ride
+ * credit, the $300 a year of travel credit.
+ *
+ * These are tracked per period rather than as one annual number because that
+ * is how they are actually lost: a monthly credit that goes unused in March is
+ * gone in April, and a card justified by $200 of credits you never remember to
+ * spend is a card losing you money. Marking a period used is the whole
+ * interaction.
+ */
+export type PerkPeriod = 'monthly' | 'quarterly' | 'semiannual' | 'annual';
+
+export type Perk = {
+  id: string;
+  label: string;
+  /** Value of ONE period, not the annual total. */
+  valueCents: number;
+  period: PerkPeriod;
+  /** Period keys already used, e.g. "2026-M03", "2026-Q1", "2026-H1", "2026". */
+  usedPeriods: string[];
+  notes: string;
+};
+
+/**
+ * What a card earns in a spending category, as a multiplier. Combined with the
+ * card's programme valuation this gives a cents-per-dollar figure, which is
+ * the only way to compare "3x Chase points" against "2% cash back" honestly.
+ */
+export type EarnRate = {
+  id: string;
+  /** One of EARN_CATEGORIES in lib/earning.ts. */
+  categoryId: string;
+  multiplier: number;
+  /** Annual spend cap on the elevated rate, if there is one. */
+  capCents: number | null;
+  notes: string;
+};
+
+/** A retention offer, logged so the next call has last year's number to hand. */
+export type RetentionOffer = {
+  id: string;
+  date: IsoDate;
+  description: string;
+  valueCents: number;
+  points: number;
+  accepted: boolean;
+};
+
+/**
+ * A business trip, for the mileage deduction.
+ *
+ * The IRS wants a contemporaneous log -- date, miles, and business purpose --
+ * and a mileage claim without one is the classic audit loss. This is that log.
+ */
+export type MileageTrip = {
+  id: string;
+  date: IsoDate;
+  miles: number;
+  /** The business purpose. Required by the substantiation rules, not optional. */
+  purpose: string;
+  /** Where to where, for the record. */
+  route: string;
+  entityId: string;
+};
+
 export type BonusStatus = 'tracking' | 'earned' | 'missed';
 
 /** A sign-up bonus attached to one card. */
@@ -103,6 +168,11 @@ export type CardAccount = {
   annualCreditsValueCents: number;
   bonus: SignupBonus | null;
   feeHistory: FeeCharge[];
+  /** Recurring credits, tracked per period so an unused one gets noticed. */
+  perks: Perk[];
+  /** Category multipliers, for working out which card to use where. */
+  earnRates: EarnRate[];
+  retentionOffers: RetentionOffer[];
   notes: string;
 };
 
@@ -111,6 +181,13 @@ export type ProgramBalance = {
   /** Points/miles for a points program; cents for a cash-back program. */
   amount: number;
   updated: IsoDate;
+  /**
+   * Last earning or redeeming activity. Several programmes expire points after
+   * a period of inactivity, and it is the ACTIVITY date that resets the clock,
+   * not the date you last looked at the balance -- so this is tracked apart
+   * from `updated`.
+   */
+  lastActivity: IsoDate | null;
 };
 
 // ---- Spending and tax categorisation ---------------------------------------
@@ -200,6 +277,14 @@ export type Settings = {
   activeTaxYear: number;
   /** Which entity a new expense defaults to. */
   defaultEntityId: string | null;
+  /**
+   * Standard mileage rate in cents per mile. It changes every year and is set
+   * by the IRS, so it is a setting rather than a constant -- confirm the
+   * current year's figure before filing.
+   */
+  mileageRateCents: number;
+  /** Warn this many days before a recurring credit's period closes. */
+  perkWarnDays: number;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -210,6 +295,8 @@ export const DEFAULT_SETTINGS: Settings = {
   bonusWarnDays: 30,
   activeTaxYear: new Date().getFullYear(),
   defaultEntityId: null,
+  mileageRateCents: 70,
+  perkWarnDays: 10,
 };
 
 export type AppData = {
@@ -224,12 +311,13 @@ export type AppData = {
   valuationOverrides: Record<string, number>;
   entities: Entity[];
   expenses: Expense[];
+  mileage: MileageTrip[];
   categorizationRules: CategorizationRule[];
   settings: Settings;
   updatedAt: string;
 };
 
-export const DATA_VERSION = 2;
+export const DATA_VERSION = 3;
 
 /**
  * Seeded so the expense views have somewhere to put things on day one. Rename
@@ -251,6 +339,7 @@ export function emptyData(): AppData {
     valuationOverrides: {},
     entities,
     expenses: [],
+    mileage: [],
     categorizationRules: [],
     settings: { ...DEFAULT_SETTINGS, defaultEntityId: entities[0].id },
     updatedAt: new Date().toISOString(),

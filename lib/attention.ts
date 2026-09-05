@@ -1,9 +1,13 @@
 import { activeBonuses } from './bonuses';
-import { daysBetween, monthKey, today } from './dates';
+import { addMonths, daysBetween, monthKey, today, toUtcMs } from './dates';
 import type { IsoDate } from './dates';
+import { bonusEligibility } from './eligibility';
 import { taxYearOf } from './expenses';
-import { upcomingFees } from './fees';
+import { cardLabel, upcomingFees } from './fees';
+import { formatCents } from './money';
+import { expiringPerks } from './perks';
 import { getProgram } from './programs';
+import { vendorsNeeding1099 } from './vendors';
 import type { AppData, CardAccount, Expense } from './types';
 
 /**
@@ -34,6 +38,13 @@ const IMPORT_STALE_DAYS = 40;
 const BALANCE_STALE_DAYS = 45;
 /** A recurring charge this overdue means a statement was probably missed. */
 const RECURRING_OVERDUE_DAYS = 45;
+/**
+ * Issuers close cards that sit unused. A year of no activity is the point at
+ * which a no-fee card kept only for its account age is genuinely at risk.
+ */
+const DORMANT_DAYS = 330;
+/** Warn this far ahead of a points balance expiring on inactivity. */
+const POINTS_EXPIRY_WARN_DAYS = 120;
 
 function normalizeMerchant(merchant: string): string {
   return merchant.toLowerCase().replace(/[^a-z]+/g, ' ').trim().slice(0, 20);
@@ -131,6 +142,21 @@ export function attentionItems(data: AppData, now: IsoDate = today()): Attention
     }
   }
 
+  // A credit whose period is about to close is the most perishable thing here:
+  // it is gone at midnight and there is no recovering it.
+  for (const status of expiringPerks(cards, settings.perkWarnDays, now)) {
+    items.push({
+      id: `perk-${status.card.id}-${status.perk.id}-${status.key}`,
+      severity: status.daysLeft <= 3 ? 'now' : 'soon',
+      title: `${status.perk.label} unused — ${status.cardLabel}`,
+      detail: `${formatCents(status.valueCents)} for ${status.label}, gone in ${
+        status.daysLeft
+      } ${status.daysLeft === 1 ? 'day' : 'days'}. Credits do not roll over.`,
+      href: '/cards',
+      actionLabel: 'Mark used',
+    });
+  }
+
   // ---- things that have gone quiet -------------------------------------------
   const lastImport = lastImportByCard(expenses);
   const staleCards: CardAccount[] = [];
@@ -166,6 +192,26 @@ export function attentionItems(data: AppData, now: IsoDate = today()): Attention
         .join(', ')} billed every month and then stopped — usually a statement that was never imported.`,
       href: '/import',
       actionLabel: 'Import statements',
+    });
+  }
+
+  // Different from a stale import: this is the card itself going unused, which
+  // is what gets an account closed for inactivity.
+  const dormant = openCards.filter((card) => {
+    const last = lastImport.get(card.id);
+    return last !== undefined && daysBetween(last, now) > DORMANT_DAYS;
+  });
+  if (dormant.length > 0) {
+    items.push({
+      id: 'dormant-cards',
+      severity: 'soon',
+      title: `${dormant.length} ${dormant.length === 1 ? 'card looks' : 'cards look'} dormant`,
+      detail: `No activity in about a year on ${dormant
+        .map((c) => c.nickname || c.productName)
+        .join(', ')}. Issuers close unused accounts, and a closed card takes its ` +
+        'credit history and its limit with it — a small recurring charge keeps it alive.',
+      href: '/cards',
+      actionLabel: 'See cards',
     });
   }
 
@@ -212,7 +258,62 @@ export function attentionItems(data: AppData, now: IsoDate = today()): Attention
     });
   }
 
+  // Hotel programmes forfeit a balance after a period of inactivity, and a
+  // single small transaction resets the clock -- worth knowing well ahead.
+  for (const balance of balances) {
+    const program = getProgram(balance.programId);
+    if (!program || program.expiry.inactivityMonths === null) continue;
+    if (balance.amount <= 0) continue;
+    const from = balance.lastActivity ?? balance.updated;
+    const expiresOn = addMonths(from, program.expiry.inactivityMonths);
+    const daysLeft = daysBetween(now, expiresOn);
+    if (daysLeft > POINTS_EXPIRY_WARN_DAYS) continue;
+    items.push({
+      id: `points-expiry-${program.id}`,
+      severity: daysLeft <= 30 ? 'now' : 'soon',
+      title:
+        daysLeft < 0
+          ? `${program.shortName} points may already have expired`
+          : `${program.shortName} points expire in ${daysLeft} days`,
+      detail: `${program.expiry.note} Last activity recorded ${from}.`,
+      href: '/points',
+      actionLabel: 'Open points',
+    });
+  }
+
   const thisYear = Number(now.slice(0, 4));
+
+  // A missed 1099-NEC is a penalty, and the deadline is at the end of January.
+  const owed1099 = vendorsNeeding1099(expenses, thisYear);
+  if (owed1099.length > 0) {
+    items.push({
+      id: 'form-1099',
+      severity: 'idle',
+      title: `${owed1099.length} ${owed1099.length === 1 ? 'contractor is' : 'contractors are'} over the 1099 threshold`,
+      detail: `${owed1099
+        .slice(0, 3)
+        .map((v) => v.merchant)
+        .join(', ')} — paid $600 or more this year. Check whether a 1099-NEC is yours to file or the payment processor's.`,
+      href: '/taxes',
+      actionLabel: 'See vendors',
+    });
+  }
+
+  // A clock that has just run out is worth surfacing once, because it opens up
+  // an application you may have been waiting on for years.
+  for (const status of bonusEligibility(cards, now)) {
+    if (!status.eligibleFrom || status.permanentlyUsed) continue;
+    const justOpened = status.eligible && daysBetween(status.eligibleFrom, now) <= 90;
+    if (!justOpened) continue;
+    items.push({
+      id: `eligible-${status.rule.id}`,
+      severity: 'idle',
+      title: `Bonus-eligible again: ${status.rule.label}`,
+      detail: `The clock ran out on ${status.eligibleFrom}. ${status.rule.note}`,
+      href: '/cards',
+      actionLabel: 'See cards',
+    });
+  }
   if (expenses.length === 0) {
     items.push({
       id: 'no-expenses',

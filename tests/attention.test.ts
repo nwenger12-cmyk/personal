@@ -141,7 +141,7 @@ describe('attentionItems', () => {
       data({
         cards: [card],
         expenses: [expense('2026-08-28', 'ADOBE')],
-        balances: [{ programId: 'chase-ur', amount: 100_000, updated: '2026-01-01' }],
+        balances: [{ programId: 'chase-ur', amount: 100_000, updated: '2026-01-01', lastActivity: '2026-01-01' }],
       }),
       NOW,
     );
@@ -154,7 +154,7 @@ describe('attentionItems', () => {
       data({
         cards: [card],
         expenses: [expense('2026-08-28', 'ADOBE')],
-        balances: [{ programId: 'chase-ur', amount: 100_000, updated: '2026-08-30' }],
+        balances: [{ programId: 'chase-ur', amount: 100_000, updated: '2026-08-30', lastActivity: '2026-08-30' }],
       }),
       NOW,
     );
@@ -172,7 +172,7 @@ describe('attentionItems', () => {
       data({
         cards: [feeCard],
         expenses: [expense('2026-01-01', 'ADOBE', { cardId: 'fee-card' })],
-        balances: [{ programId: 'chase-ur', amount: 1, updated: '2026-01-01' }],
+        balances: [{ programId: 'chase-ur', amount: 1, updated: '2026-01-01', lastActivity: '2026-01-01' }],
       }),
       NOW,
     );
@@ -188,7 +188,7 @@ describe('attentionItems', () => {
       data({
         cards: [card],
         expenses: [expense('2026-08-28', 'ADOBE')],
-        balances: [{ programId: 'chase-ur', amount: 100_000, updated: '2026-09-01' }],
+        balances: [{ programId: 'chase-ur', amount: 100_000, updated: '2026-09-01', lastActivity: '2026-09-01' }],
       }),
       NOW,
     );

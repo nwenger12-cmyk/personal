@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useData } from '@/components/DataProvider';
 import { Badge, Button, EmptyState, Field, Note, Panel, PanelHeader, Select, Stat, StatRow, TextInput } from '@/components/ui';
-import { daysBetween, formatDate, today } from '@/lib/dates';
+import { addMonths, daysBetween, formatDate, today } from '@/lib/dates';
 import { centsToInput, formatCents, formatCount, formatCpp, formatDollars, formatNumber, parseDollarsToCents, parseIntegerInput } from '@/lib/money';
 import { balanceViews, totalValueCents, untrackedPrograms } from '@/lib/points';
 import type { BalanceView } from '@/lib/points';
@@ -134,6 +134,26 @@ function ProgramPanel({
           </table>
         </div>
       ) : null}
+
+      {view.program.expiry.inactivityMonths !== null ? (
+        (() => {
+          const from = view.balance.lastActivity ?? view.balance.updated;
+          const expiresOn = addMonths(from, view.program.expiry.inactivityMonths);
+          const daysLeft = daysBetween(today(), expiresOn);
+          return (
+            <div className="flex flex-wrap items-center gap-2 rounded-xl bg-surface-2/50 px-4 py-3 ring-1 ring-line">
+              <Badge tone={daysLeft <= 120 ? 'warn' : 'neutral'} mono>
+                {daysLeft < 0 ? 'may have expired' : `expires ${formatDate(expiresOn)}`}
+              </Badge>
+              <span className="text-xs leading-relaxed text-muted">
+                {view.program.expiry.note} Last activity {formatDate(from)}.
+              </span>
+            </div>
+          );
+        })()
+      ) : (
+        <p className="text-xs leading-relaxed text-dim">{view.program.expiry.note}</p>
+      )}
 
       {view.program.transferPartners.length > 0 ? (
         <details>

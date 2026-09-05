@@ -15,7 +15,10 @@ import {
   taxYears,
 } from '@/lib/expenses';
 import type { EntitySummary } from '@/lib/expenses';
+import { MileageLog } from '@/components/MileageLog';
 import { cardLabel } from '@/lib/fees';
+import { totalMileageDeductionCents } from '@/lib/mileage';
+import { vendorTotals } from '@/lib/vendors';
 
 const MONTHS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
@@ -167,10 +170,10 @@ function EntityBlock({ summary }: { summary: EntitySummary }) {
 }
 
 export default function TaxesPage() {
-  const { data, ready, updateSettings } = useData();
+  const { data, ready, updateSettings, addTrip, removeTrip } = useData();
   const year = data.settings.activeTaxYear;
 
-  const { summary, years, months, businessDeductible } = useMemo(() => {
+  const { summary, years, months, businessDeductible, mileageDeductible, vendors } = useMemo(() => {
     const s = taxSummary(data.expenses, data.entities, year);
     return {
       summary: s,
@@ -179,8 +182,15 @@ export default function TaxesPage() {
       businessDeductible: s.entities
         .filter((e) => e.entity.kind === 'business')
         .reduce((sum, e) => sum + e.deductibleCents, 0),
+      mileageDeductible: totalMileageDeductionCents(
+        data.mileage,
+        data.entities,
+        year,
+        data.settings.mileageRateCents,
+      ),
+      vendors: vendorTotals(data.expenses, year),
     };
-  }, [data.expenses, data.entities, year]);
+  }, [data.expenses, data.entities, data.mileage, data.settings.mileageRateCents, year]);
 
   if (!ready) return <p className="text-sm text-dim">Loading your totals...</p>;
 
@@ -249,7 +259,11 @@ export default function TaxesPage() {
               value={businessDeductible}
               format={formatDollars}
               tone="ok"
-              hint="across your business entities"
+              hint={
+                mileageDeductible > 0
+                  ? `plus ${formatDollars(mileageDeductible)} of mileage below`
+                  : 'across your business entities'
+              }
             />
             <Stat
               label="Uncategorised"
@@ -285,6 +299,51 @@ export default function TaxesPage() {
           {summary.entities.map((entitySummary) => (
             <EntityBlock key={entitySummary.entity.id} summary={entitySummary} />
           ))}
+
+          <MileageLog
+            trips={data.mileage}
+            entities={data.entities}
+            year={year}
+            rateCents={data.settings.mileageRateCents}
+            onAdd={addTrip}
+            onRemove={removeTrip}
+          />
+
+          {vendors.length > 0 ? (
+            <Panel className="space-y-4">
+              <PanelHeader
+                title="Contractors"
+                description="Pay a contractor $600 or more in a year and a 1099-NEC is likely owed. Payments through a card or a network like Upwork are usually reported by the processor instead — this is a prompt to check who it falls to, not a filing list."
+              />
+              <ul className="divide-y divide-line border-t border-line">
+                {vendors.map((vendor) => (
+                  <li
+                    key={`${vendor.entityId}-${vendor.merchant}`}
+                    className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2.5"
+                  >
+                    <span className="min-w-0">
+                      <span className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm text-text">{vendor.merchant}</span>
+                        {vendor.crossesThreshold ? (
+                          <Badge tone="warn">Over $600</Badge>
+                        ) : vendor.approaching ? (
+                          <Badge>Approaching</Badge>
+                        ) : null}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-dim">
+                        {data.entities.find((e) => e.id === vendor.entityId)?.name ?? '—'} ·{' '}
+                        {vendor.paymentCount}{' '}
+                        {vendor.paymentCount === 1 ? 'payment' : 'payments'}
+                      </span>
+                    </span>
+                    <span className="font-mono text-sm text-text">
+                      {formatCents(vendor.totalCents)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          ) : null}
 
           <Panel className="space-y-4">
             <PanelHeader
