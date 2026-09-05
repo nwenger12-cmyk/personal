@@ -5,11 +5,19 @@ import { useData } from './DataProvider';
 import { Badge, Button, Checkbox, EmptyState, Field, Note, Panel, PanelHeader, Select, Stat } from './ui';
 import { formatDate } from '@/lib/dates';
 import { cardLabel } from '@/lib/fees';
-import { analyzeFile, buildPlan } from '@/lib/import';
-import type { FileAssignment } from '@/lib/import';
+import { analyzeFile, analyzeParsedStatement, buildPlan } from '@/lib/import';
+import type { FileAnalysis, FileAssignment } from '@/lib/import';
+import type { ParsedStatement } from '@/lib/statement-pdf';
 import { formatCents, formatCount, formatDollars } from '@/lib/money';
 
-type LoadedFile = { id: string; name: string; text: string };
+/**
+ * A CSV is held as text and parsed on every render; a PDF is parsed once, on
+ * load, because pulling text out of one is slow and asynchronous. Both end up
+ * as the same FileAnalysis, so the rest of the screen cannot tell them apart.
+ */
+type LoadedFile =
+  | { id: string; name: string; kind: 'csv'; text: string }
+  | { id: string; name: string; kind: 'pdf'; parsed: ParsedStatement };
 
 let fileCounter = 0;
 
@@ -32,26 +40,55 @@ export function ImportCenter() {
   const [applyRules, setApplyRules] = useState(true);
   const [dragging, setDragging] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [reading, setReading] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const defaultEntityId = data.settings.defaultEntityId ?? data.entities[0]?.id ?? '';
 
   const addFiles = useCallback((incoming: FileList | File[]) => {
     setResult(null);
+    const list = [...incoming];
+    setReading((n) => n + list.length);
+
     Promise.all(
-      [...incoming].map(async (file) => {
+      list.map(async (file): Promise<LoadedFile> => {
         fileCounter += 1;
-        return { id: `file-${fileCounter}`, name: file.name, text: await file.text() };
+        const id = `file-${fileCounter}`;
+        const isPdf =
+          file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+
+        if (!isPdf) {
+          return { id, name: file.name, kind: 'csv', text: await file.text() };
+        }
+        // Loaded on demand so pdf.js does not weigh down anyone importing CSVs.
+        const { parsePdfStatement } = await import('@/lib/pdf-extract');
+        return {
+          id,
+          name: file.name,
+          kind: 'pdf',
+          parsed: await parsePdfStatement(await file.arrayBuffer()),
+        };
       }),
     )
       .then((loaded) => setFiles((current) => [...current, ...loaded]))
-      .catch(() => setResult('One of those files could not be read.'));
+      .catch((error: unknown) => {
+        // Say what actually went wrong. A generic "could not be read" leaves
+        // someone with a perfectly good statement and no idea why.
+        const detail = error instanceof Error ? error.message : String(error);
+        setResult(
+          `That file could not be read: ${detail}. A PDF has to be a statement ` +
+            'downloaded from your issuer — a scan or a photo has no text to pull out.',
+        );
+      })
+      .finally(() => setReading((n) => Math.max(0, n - list.length)));
   }, []);
 
   const analyses = useMemo(
-    () =>
+    (): FileAnalysis[] =>
       files.map((file) =>
-        analyzeFile(file.id, file.name, file.text, data.cards, flipped[file.id] ?? false),
+        file.kind === 'pdf'
+          ? analyzeParsedStatement(file.id, file.name, file.parsed, data.cards)
+          : analyzeFile(file.id, file.name, file.text, data.cards, flipped[file.id] ?? false),
       ),
     [files, data.cards, flipped],
   );
@@ -146,7 +183,7 @@ export function ImportCenter() {
         <input
           ref={inputRef}
           type="file"
-          accept=".csv,text/csv,text/plain"
+          accept=".csv,.pdf,text/csv,text/plain,application/pdf"
           multiple
           className="hidden"
           onChange={(e) => {
@@ -158,15 +195,20 @@ export function ImportCenter() {
           Drop this month&rsquo;s statements here
         </h2>
         <p className="mx-auto mt-1.5 max-w-lg text-sm leading-relaxed text-muted">
-          All of them at once. Each file is matched to a card by the account
-          number in its rows or its filename, and everything is read in this
-          browser — no file is uploaded anywhere.
+          CSV exports or PDF statements, all of them at once. Each file is
+          matched to a card by the account number printed on it, and everything
+          is read in this browser — no file is uploaded anywhere.
         </p>
         <div className="mt-4">
           <Button variant="primary" onClick={() => inputRef.current?.click()}>
             Choose files
           </Button>
         </div>
+        {reading > 0 ? (
+          <p className="mt-3 text-xs text-dim">
+            Reading {reading} {reading === 1 ? 'file' : 'files'}…
+          </p>
+        ) : null}
       </div>
 
       {result ? <Note>{result}</Note> : null}
@@ -174,7 +216,7 @@ export function ImportCenter() {
       {files.length === 0 ? (
         <EmptyState
           title="Nothing loaded yet"
-          description="Chase, Capital One, Citi, Discover and Amex exports are all understood. Grab a CSV from each card's account activity page and drop the lot in."
+          description="Chase, Capital One, Citi, Discover and Amex are all understood, as CSV exports or as the PDF statement itself. Grab whichever is easier from each card's account page and drop the lot in."
         />
       ) : (
         <>
@@ -207,8 +249,17 @@ export function ImportCenter() {
                           <span className="truncate font-mono text-sm text-text">
                             {analysis.name}
                           </span>
+                          <Badge>{analysis.format === 'pdf' ? 'PDF statement' : 'CSV'}</Badge>
                           {analysis.issuer ? <Badge>{analysis.issuer}</Badge> : null}
                           {analysis.error ? <Badge tone="danger">Unreadable</Badge> : null}
+                          {analysis.reconciliation ? (
+                            analysis.reconciliation.purchasesMatch &&
+                            analysis.reconciliation.creditsMatch ? (
+                              <Badge tone="ok">Totals match the statement</Badge>
+                            ) : (
+                              <Badge tone="danger">Totals do not match</Badge>
+                            )
+                          ) : null}
                           {analysis.matchedBy && !overrides[analysis.fileId] ? (
                             <Badge tone="ok">
                               matched by {analysis.matchedBy === 'row' ? 'account number' : 'filename'}
@@ -267,6 +318,32 @@ export function ImportCenter() {
                       </div>
                     </div>
 
+                    {analysis.warnings.length > 0 ? (
+                      <ul className="mt-2 space-y-1">
+                        {analysis.warnings.map((warning) => (
+                          <li key={warning} className="text-xs leading-relaxed text-warn-ink">
+                            {warning}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+
+                    {analysis.format === 'pdf' && analysis.reconciliation ? (
+                      <p className="mt-2 text-xs leading-relaxed text-dim">
+                        Checked against the statement&rsquo;s own summary:{' '}
+                        <span className="font-mono">
+                          {formatCents(analysis.reconciliation.parsedPurchasesCents)}
+                        </span>{' '}
+                        of purchases found,{' '}
+                        <span className="font-mono">
+                          {formatCents(analysis.reconciliation.statedPurchasesCents)}
+                        </span>{' '}
+                        claimed.
+                      </p>
+                    ) : null}
+
+                    {/* A PDF's section headings say what each row is, so there
+                        is no sign to guess at and nothing to flip. */}
                     {!analysis.error && analysis.mapping ? (
                       <div className="mt-2">
                         <Checkbox

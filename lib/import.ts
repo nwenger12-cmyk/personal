@@ -5,9 +5,10 @@ import type { ColumnMapping, Transaction } from './csv';
 import { bonusDeadline } from './bonuses';
 import { toUtcMs } from './dates';
 import type { IsoDate } from './dates';
-import { importKeyFor } from './expenses';
+import { createImportKeyer } from './expenses';
 import { cardLabel, feeOutlook } from './fees';
 import { newId } from './storage';
+import type { ParsedStatement, Reconciliation } from './statement-pdf';
 import type {
   CardAccount,
   CategorizationRule,
@@ -55,6 +56,8 @@ export type FileAnalysis = {
   fileId: string;
   name: string;
   error: string | null;
+  /** How the file was read, so the UI can explain what it did. */
+  format: 'csv' | 'pdf';
   issuer: IssuerGuess;
   mapping: ColumnMapping | null;
   transactions: Transaction[];
@@ -67,6 +70,10 @@ export type FileAnalysis = {
   dateRange: [IsoDate, IsoDate] | null;
   purchaseCount: number;
   paymentCount: number;
+  /** PDF only: how the parse compared with the totals the statement prints. */
+  reconciliation: Reconciliation | null;
+  /** Anything the parse wants to flag before you trust it. */
+  warnings: string[];
 };
 
 /**
@@ -98,6 +105,7 @@ export function analyzeFile(
     fileId,
     name,
     error: null,
+    format: 'csv',
     issuer: null,
     mapping: null,
     transactions: [],
@@ -107,6 +115,8 @@ export function analyzeFile(
     dateRange: null,
     purchaseCount: 0,
     paymentCount: 0,
+    reconciliation: null,
+    warnings: [],
   };
 
   const rows = parseCsv(text);
@@ -283,6 +293,17 @@ export function buildPlan(
     if (!assignment) continue;
     if (!assignment.cardId) unassignedFiles.push(analysis.name);
 
+    /*
+     * Occurrence numbering resets per file, and that boundary is the whole
+     * trick. Inside one statement, two identical same-day rows are two real
+     * charges and must both import. Across two statements that overlap, the
+     * same row appearing in both is one charge -- and because each file
+     * numbers from scratch, the second file regenerates the same keys and
+     * they dedupe. Numbering across the whole run would break the second
+     * case; not numbering at all breaks the first.
+     */
+    const keyFor = createImportKeyer();
+
     for (const tx of analysis.transactions) {
       if (tx.kind === 'payment') {
         payments += 1;
@@ -297,7 +318,7 @@ export function buildPlan(
       }
 
       const merchant = tx.description || 'Imported transaction';
-      const importKey = importKeyFor(tx.date, tx.cents, merchant);
+      const importKey = keyFor(tx.date, tx.cents, merchant);
       // Two files covering an overlapping period will both carry the same
       // row, so this run has to dedupe against itself as well as against
       // what is already stored.
@@ -383,5 +404,52 @@ export function buildPlan(
     bonusMoves,
     totalCents: expenses.reduce((sum, e) => sum + e.amountCents, 0),
     unassignedFiles,
+  };
+}
+
+/**
+ * The same analysis, for a statement PDF that has already been parsed.
+ *
+ * It produces the identical FileAnalysis shape as a CSV, which is the point:
+ * everything downstream -- card matching, merchant rules, deduplication, bonus
+ * progress, annual fee detection -- runs unchanged. A PDF is just another way
+ * to arrive at a list of transactions.
+ *
+ * Two things it knows that a CSV does not: the account number is printed on
+ * the statement, so the card match is exact rather than inferred from a
+ * filename; and the statement prints its own totals, so the parse arrives with
+ * a verdict on whether it added up.
+ */
+export function analyzeParsedStatement(
+  fileId: string,
+  name: string,
+  parsed: ParsedStatement,
+  cards: CardAccount[],
+): FileAnalysis {
+  const detectedLast4 = parsed.last4 ? [parsed.last4] : [];
+  const matched = parsed.last4
+    ? cards.find((card) => card.last4 === parsed.last4) ?? null
+    : null;
+
+  const dates = parsed.transactions.map((t) => t.date).sort();
+
+  return {
+    fileId,
+    name,
+    error: parsed.transactions.length === 0 && parsed.warnings.length > 0
+      ? parsed.warnings[0]
+      : null,
+    format: 'pdf',
+    issuer: parsed.issuer,
+    mapping: null,
+    transactions: parsed.transactions,
+    detectedLast4,
+    suggestedCardId: matched?.id ?? null,
+    matchedBy: matched ? 'row' : null,
+    dateRange: dates.length > 0 ? [dates[0], dates[dates.length - 1]] : null,
+    purchaseCount: parsed.transactions.filter((t) => t.kind !== 'payment').length,
+    paymentCount: parsed.transactions.filter((t) => t.kind === 'payment').length,
+    reconciliation: parsed.reconciliation,
+    warnings: parsed.warnings,
   };
 }

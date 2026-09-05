@@ -35,12 +35,15 @@ export default function ImportPage() {
         <>
           <ImportCenter />
           <Note>
-            Statement CSVs are the closest thing to a connection that does not
+            Statements are the closest thing to a connection that does not
             involve handing over a card login. Aggregators can read transactions
             but not fee schedules, bonus terms, or points balances; the services
             that show points balances do it by signing in as you. So this is the
             one manual step, and everything else follows from it — the only
             figure that still has to be typed is a points balance.
+            {' '}A PDF statement is the better of the two inputs: its section
+            headings say what each row is, its account number says which card it
+            belongs to, and its printed totals let the parse be checked.
           </Note>
         </>
       )}

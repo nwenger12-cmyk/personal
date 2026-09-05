@@ -113,9 +113,10 @@ accessibility behaviour the rest of it honours.
 
 The design goal after the first setup is that maintenance is one step a month.
 
-**Drop every statement into Import at once.** Each file is matched to a card by
-the account number in its rows (Capital One and Amex put it there) or by the
-last four in the download filename (Chase names its export
+**Drop every statement into Import at once — CSV exports or the PDF statements
+themselves.** Each file is matched to a card by the account number printed on
+it, by the account number in its rows (Capital One and Amex put it there), or
+by the last four in the download filename (Chase names its export
 `Chase7730_Activity….CSV`). One confirm then updates three things at once,
 because all three are read off the same transactions:
 
@@ -142,6 +143,30 @@ as deadlines:
 - transactions waiting for a category
 - a points balance nobody has touched in 45 days
 - fees inside their review window, and bonuses behind pace or near their deadline
+
+### PDF statements
+
+A statement is the better input, and the parser leans on three things a CSV
+does not have:
+
+1. **Section headings say what a row is.** "PURCHASE" and "PAYMENTS AND OTHER
+   CREDITS" mean the same thing at every issuer, whereas a signed number does
+   not — Chase writes purchases negative in its CSV export and positive on the
+   statement it mails you. With headings there is no sign to guess at, so PDFs
+   have no "flip the sign" switch.
+2. **The account number is printed on it**, so the file lands on the right card
+   exactly rather than by inference.
+3. **The statement prints its own totals**, so the parse can be *checked*. Every
+   PDF import shows whether the purchases found add up to the purchases the
+   statement claims. If they disagree, rows were missed, and it says so loudly
+   rather than importing a plausible-looking subset.
+
+Rows carry MM/DD with no year, so the year comes from the closing date — and a
+December row on a January statement is correctly dated to the previous year,
+which otherwise puts every December purchase in the wrong tax year.
+
+It must be a statement downloaded from the issuer. A scan or a photo has no
+text to extract, and the import says so rather than failing silently.
 
 **What still has to be typed.** One thing: points balances. No issuer exposes a
 points API, and the services that show balances do it by storing your card
@@ -334,6 +359,8 @@ lib/
   bonuses.ts    spend progress (derived or pinned), pace, deadlines
   rules.ts      5/24 and issuer application rules
   csv.ts        parsing the shapes issuers actually export
+  statement-pdf.ts  reading a PDF statement, checked against its own totals
+  pdf-extract.ts    pdf.js text extraction, in the browser
   import.ts     file-to-card matching, fee detection, the one-confirm plan
   attention.ts  what has gone stale, including what has stopped appearing
   points.ts     balances priced by redemption route
@@ -349,7 +376,7 @@ lib/
   vendors.ts    contractors over the 1099 threshold
   calendar.ts   the .ics export
   storage.ts    localStorage, validation, import/export
-tests/          231 tests over the math above
+tests/          260 tests over the math above
 ```
 
 ## Deliberately not built

@@ -337,3 +337,75 @@ describe('buildPlan', () => {
     expect(without.expenses).toHaveLength(1);
   });
 });
+
+describe('identical repeated charges', () => {
+  const cards = [card({ id: 'chase-card', last4: '7730' })];
+  const opts = { includeRefunds: true, applyRules: true, leadDays: 45 };
+  const assign = { f1: { fileId: 'f1', cardId: 'chase-card', entityId: 'biz' } };
+
+  // Two $10 charges at the same merchant on the same day, twice over. This is
+  // taken from a real statement, not invented -- coffee and transit apps
+  // produce it constantly.
+  const csv =
+    `Transaction Date,Post Date,Description,Category,Type,Amount,Memo\n` +
+    `08/18/2024,08/19/2024,COFFEE MOBILE,Dining,Sale,-10.00,\n` +
+    `08/18/2024,08/19/2024,COFFEE MOBILE,Dining,Sale,-10.00,\n` +
+    `08/19/2024,08/20/2024,COFFEE MOBILE,Dining,Sale,-10.00,\n` +
+    `08/19/2024,08/20/2024,COFFEE MOBILE,Dining,Sale,-10.00,\n`;
+
+  it('imports every one of them rather than collapsing duplicates', () => {
+    const plan = buildPlan([analyzeFile('f1', 'x.csv', csv, cards)], assign, cards, [], [], opts);
+    expect(plan.expenses).toHaveLength(4);
+    expect(plan.duplicates).toBe(0);
+    expect(plan.totalCents).toBe(4_000);
+  });
+
+  it('gives them distinct keys', () => {
+    const plan = buildPlan([analyzeFile('f1', 'x.csv', csv, cards)], assign, cards, [], [], opts);
+    const keys = plan.expenses.map((e) => e.importKey);
+    expect(new Set(keys).size).toBe(4);
+  });
+
+  it('still skips all four when the same statement is imported again', () => {
+    const first = buildPlan([analyzeFile('f1', 'x.csv', csv, cards)], assign, cards, [], [], opts);
+    const second = buildPlan(
+      [analyzeFile('f1', 'x.csv', csv, cards)],
+      assign,
+      cards,
+      first.expenses,
+      [],
+      opts,
+    );
+    expect(second.expenses).toHaveLength(0);
+    expect(second.duplicates).toBe(4);
+  });
+});
+
+describe('occurrence numbering is per file', () => {
+  const cards = [card({ id: 'chase-card', last4: '7730' })];
+  const opts = { includeRefunds: true, applyRules: true, leadDays: 45 };
+  const repeated =
+    `Transaction Date,Post Date,Description,Category,Type,Amount,Memo\n` +
+    `08/18/2024,08/19/2024,COFFEE MOBILE,Dining,Sale,-10.00,\n` +
+    `08/18/2024,08/19/2024,COFFEE MOBILE,Dining,Sale,-10.00,\n`;
+
+  it('keeps both copies from one file but not four from two overlapping files', () => {
+    const one = buildPlan(
+      [analyzeFile('f1', 'a.csv', repeated, cards)],
+      { f1: { fileId: 'f1', cardId: 'chase-card', entityId: 'biz' } },
+      cards, [], [], opts,
+    );
+    expect(one.expenses).toHaveLength(2);
+
+    const both = buildPlan(
+      [analyzeFile('f1', 'a.csv', repeated, cards), analyzeFile('f2', 'b.csv', repeated, cards)],
+      {
+        f1: { fileId: 'f1', cardId: 'chase-card', entityId: 'biz' },
+        f2: { fileId: 'f2', cardId: 'chase-card', entityId: 'biz' },
+      },
+      cards, [], [], opts,
+    );
+    expect(both.expenses).toHaveLength(2);
+    expect(both.duplicates).toBe(2);
+  });
+});

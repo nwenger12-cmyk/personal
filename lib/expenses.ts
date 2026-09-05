@@ -48,18 +48,45 @@ export function deductibleCentsFor(expense: Expense, entities: Entity[]): number
 
 /**
  * A stable identity for an imported row, so re-importing a statement that
- * overlaps one already loaded updates the existing expense rather than
- * doubling it. Date, amount and a squashed merchant string: two genuinely
- * distinct charges at the same merchant for the same amount on the same day
- * are rare enough, and the review queue surfaces them if it happens.
+ * overlaps one already loaded skips it rather than doubling it.
+ *
+ * Date, amount and a squashed merchant string -- plus an occurrence number,
+ * because identical same-day charges at the same merchant are NOT rare. A real
+ * statement turned up four $10 charges at one coffee chain across two days,
+ * two on each; keying on the first three fields alone would have silently
+ * dropped half of them.
+ *
+ * The ordinal is omitted for the first occurrence so keys written before this
+ * existed still match, and it is assigned in file order, which is stable
+ * across re-imports of the same statement.
  */
 export function importKeyFor(
   date: IsoDate,
   amountCents: number,
   merchant: string,
+  occurrence = 1,
 ): string {
   const squashed = merchant.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 24);
-  return `${date}|${amountCents}|${squashed}`;
+  const base = `${date}|${amountCents}|${squashed}`;
+  return occurrence <= 1 ? base : `${base}|${occurrence}`;
+}
+
+/**
+ * Hands out occurrence numbers so repeated identical rows get distinct keys.
+ * One instance per import run; feed it rows in the order they appear.
+ */
+export function createImportKeyer(): (
+  date: IsoDate,
+  amountCents: number,
+  merchant: string,
+) => string {
+  const seen = new Map<string, number>();
+  return (date, amountCents, merchant) => {
+    const base = importKeyFor(date, amountCents, merchant);
+    const next = (seen.get(base) ?? 0) + 1;
+    seen.set(base, next);
+    return importKeyFor(date, amountCents, merchant, next);
+  };
 }
 
 export function taxYears(expenses: Expense[]): number[] {
