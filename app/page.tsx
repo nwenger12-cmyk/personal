@@ -2,11 +2,13 @@
 
 import Link from 'next/link';
 import { useMemo } from 'react';
+import { AttentionPanel } from '@/components/AttentionPanel';
 import { useData } from '@/components/DataProvider';
 import { BonusProgress } from '@/components/BonusProgress';
 import { FiveTwentyFourPanel } from '@/components/FiveTwentyFourPanel';
 import { Timeline } from '@/components/Timeline';
 import { Button, EmptyState, Panel, PanelHeader, Stat } from '@/components/ui';
+import { attentionItems } from '@/lib/attention';
 import { activeBonuses, outstandingSpendCents, pendingRewards } from '@/lib/bonuses';
 import { formatDate, relativeDays, today } from '@/lib/dates';
 import { feeTotals, upcomingFees } from '@/lib/fees';
@@ -23,7 +25,7 @@ export default function DashboardPage() {
 
   const view = useMemo(() => {
     const now = today();
-    const bonuses = activeBonuses(cards, settings.bonusWarnDays, now);
+    const bonuses = activeBonuses(cards, settings.bonusWarnDays, now, data.expenses);
     const balances = balanceViews(data.balances, data.valuationOverrides, cards);
     return {
       totals: feeTotals(cards),
@@ -34,6 +36,7 @@ export default function DashboardPage() {
       pointsValue: totalValueCents(balances),
       timeline: buildTimeline(cards, settings, 12, now),
       five24: fiveTwentyFour(cards, now),
+      attention: attentionItems(data, now),
       spending: (() => {
         const year = Number(now.slice(0, 4));
         const inYear = data.expenses.filter((e) => taxYearOf(e) === year);
@@ -50,7 +53,7 @@ export default function DashboardPage() {
         };
       })(),
     };
-  }, [cards, data.balances, data.valuationOverrides, data.expenses, data.entities, settings]);
+  }, [cards, data, settings]);
 
   if (!ready) {
     return <p className="text-sm text-dim">Loading your cards...</p>;
@@ -100,6 +103,8 @@ export default function DashboardPage() {
           {bonuses.length === 1 ? '' : 'es'} in flight
         </p>
       </div>
+
+      <AttentionPanel items={view.attention} />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Stat
@@ -249,28 +254,6 @@ export default function DashboardPage() {
         </Panel>
       ) : null}
 
-      {nextFee && nextFee.daysUntil <= settings.feeReviewLeadDays ? (
-        <Panel className="border-warn/30 bg-warn/5">
-          <PanelHeader
-            title="Fee decision due"
-            description={
-              <>
-                <span className="font-medium text-text">{nextFee.cardLabel}</span> posts{' '}
-                <span className="font-mono">{formatCents(nextFee.amountCents)}</span>{' '}
-                {relativeDays(nextFee.daysUntil)}. Call before it posts if you want to
-                downgrade or cancel -- issuers generally refund a fee only within about
-                30 days of the charge, and downgrading to a no-fee card in the same
-                family keeps the account age on your report.
-              </>
-            }
-            action={
-              <Link href={`/cards?card=${nextFee.cardId}`}>
-                <Button size="sm">Open card</Button>
-              </Link>
-            }
-          />
-        </Panel>
-      ) : null}
     </div>
   );
 }

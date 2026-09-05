@@ -49,6 +49,7 @@ export function sampleData(now: IsoDate = today()): AppData {
     spendRequiredCents: 800_000,
     spendWindowMonths: 3,
     startDate: monthsAgo(2, now),
+    progressSource: 'expenses',
     spendProgressCents: 512_000,
     progressUpdated: addMonths(now, -1),
     status: 'tracking',

@@ -125,6 +125,8 @@ export type ColumnMapping = {
   creditIndex: number;
   descriptionIndex: number;
   typeIndex: number;
+  /** Capital One and some Amex exports name the card on every row. */
+  cardNoIndex: number;
   /** True when a positive number in the amount column means a purchase. */
   purchasesArePositive: boolean;
 };
@@ -154,6 +156,10 @@ export function detectColumns(rows: CsvRow[]): ColumnMapping | null {
     (h) => h.includes('description') || h.includes('merchant') || h.includes('payee'),
   );
   const typeIndex = findIndex(header, (h) => h === 'type' || h === 'status');
+  const cardNoIndex = findIndex(
+    header,
+    (h) => h.includes('card no') || h === 'card' || h.includes('card number'),
+  );
 
   return {
     dateIndex,
@@ -162,6 +168,7 @@ export function detectColumns(rows: CsvRow[]): ColumnMapping | null {
     creditIndex,
     descriptionIndex,
     typeIndex,
+    cardNoIndex,
     purchasesArePositive: debitIndex !== -1
       ? true
       : inferPurchaseSign(rows, amountIndex, typeIndex),
@@ -216,6 +223,8 @@ export type Transaction = {
   /** Oriented so a purchase is always positive, whatever the file's convention. */
   cents: number;
   kind: TxKind;
+  /** Last four of the card, when the export names it on the row. */
+  last4: string | null;
 };
 
 const PAYMENT_RE = /\b(payment|autopay|auto pay|thank you|pymt|e-?payment|bill pay)\b/i;
@@ -256,7 +265,15 @@ export function toTransactions(rows: CsvRow[], mapping: ColumnMapping): Transact
 
     const description = (row[mapping.descriptionIndex] ?? '').trim();
     const type = mapping.typeIndex === -1 ? '' : (row[mapping.typeIndex] ?? '');
-    out.push({ date, description, cents: oriented, kind: classify(description, type, oriented) });
+    const rawCardNo = mapping.cardNoIndex === -1 ? '' : (row[mapping.cardNoIndex] ?? '');
+    const digits = rawCardNo.replace(/\D/g, '');
+    out.push({
+      date,
+      description,
+      cents: oriented,
+      kind: classify(description, type, oriented),
+      last4: digits.length >= 4 ? digits.slice(-4) : null,
+    });
   }
 
   return out;

@@ -1,7 +1,7 @@
 import { addMonths, daysBetween, today, toUtcMs } from './dates';
 import type { IsoDate } from './dates';
 import { cardLabel } from './fees';
-import type { CardAccount, SignupBonus } from './types';
+import type { CardAccount, Expense, SignupBonus } from './types';
 
 /**
  * Sign-up bonus progress, and the one number that actually decides the
@@ -48,6 +48,8 @@ export function bonusOutlook(
   bonus: SignupBonus,
   warnDays: number,
   now: IsoDate = today(),
+  /** Overrides the pinned figure when progress is derived from expenses. */
+  progressCentsOverride?: number,
 ): BonusOutlook {
   const deadline = bonusDeadline(bonus);
   const daysTotal = Math.max(1, daysBetween(bonus.startDate, deadline));
@@ -55,7 +57,10 @@ export function bonusOutlook(
   const daysElapsed = Math.max(0, Math.min(daysTotal, daysBetween(bonus.startDate, now)));
 
   const requiredCents = Math.max(0, bonus.spendRequiredCents);
-  const progressCents = Math.max(0, bonus.spendProgressCents);
+  const progressCents = Math.max(
+    0,
+    progressCentsOverride ?? bonus.spendProgressCents,
+  );
   const remainingCents = Math.max(0, requiredCents - progressCents);
 
   const progressRatio =
@@ -96,11 +101,89 @@ export function bonusOutlook(
   };
 }
 
+
+/**
+ * Bonus spend worked out from the transactions already imported.
+ *
+ * This is the point of linking an expense to a card: once statements are
+ * coming in, the progress bar maintains itself and there is no second number
+ * to keep in step. Refunds carry negative amounts and so net off, which is how
+ * issuers count it too.
+ *
+ * Only purchases on THIS card inside the window count -- an expense filed to a
+ * different card, or dated outside the window, is not qualifying spend however
+ * real it is.
+ */
+export function derivedProgressCents(
+  card: CardAccount,
+  bonus: SignupBonus,
+  expenses: Expense[],
+): { cents: number; expenseCount: number } {
+  const deadline = bonusDeadline(bonus);
+  const fromMs = toUtcMs(bonus.startDate);
+  const toMs = toUtcMs(deadline);
+
+  let cents = 0;
+  let expenseCount = 0;
+  for (const expense of expenses) {
+    if (expense.cardId !== card.id) continue;
+    const ms = toUtcMs(expense.date);
+    if (ms < fromMs || ms > toMs) continue;
+    cents += expense.amountCents;
+    expenseCount += 1;
+  }
+  return { cents: Math.max(0, cents), expenseCount };
+}
+
+export type ProgressReading = {
+  cents: number;
+  source: 'expenses' | 'manual';
+  /** How many imported transactions the derived figure is built from. */
+  expenseCount: number;
+  /**
+   * True when the bonus is set to derive but nothing on this card has been
+   * imported yet -- the bar would read zero, so the pinned figure is used and
+   * the UI says so rather than showing a wrong zero.
+   */
+  fellBackToManual: boolean;
+};
+
+export function readProgress(
+  card: CardAccount,
+  bonus: SignupBonus,
+  expenses: Expense[],
+): ProgressReading {
+  if (bonus.progressSource === 'manual') {
+    return {
+      cents: bonus.spendProgressCents,
+      source: 'manual',
+      expenseCount: 0,
+      fellBackToManual: false,
+    };
+  }
+  const derived = derivedProgressCents(card, bonus, expenses);
+  if (derived.expenseCount === 0) {
+    return {
+      cents: bonus.spendProgressCents,
+      source: 'manual',
+      expenseCount: 0,
+      fellBackToManual: true,
+    };
+  }
+  return {
+    cents: derived.cents,
+    source: 'expenses',
+    expenseCount: derived.expenseCount,
+    fellBackToManual: false,
+  };
+}
+
 export type TrackedBonus = {
   card: CardAccount;
   bonus: SignupBonus;
   outlook: BonusOutlook;
   label: string;
+  progress: ProgressReading;
 };
 
 /** Bonuses still being worked, soonest deadline first. */
@@ -108,29 +191,41 @@ export function activeBonuses(
   cards: CardAccount[],
   warnDays: number,
   now: IsoDate = today(),
+  expenses: Expense[] = [],
 ): TrackedBonus[] {
   return cards
     .filter((card): card is CardAccount & { bonus: SignupBonus } => card.bonus !== null)
     .filter((card) => card.bonus.status === 'tracking')
-    .map((card) => ({
-      card,
-      bonus: card.bonus,
-      outlook: bonusOutlook(card.bonus, warnDays, now),
-      label: cardLabel(card),
-    }))
+    .map((card) => {
+      const progress = readProgress(card, card.bonus, expenses);
+      return {
+        card,
+        bonus: card.bonus,
+        outlook: bonusOutlook(card.bonus, warnDays, now, progress.cents),
+        label: cardLabel(card),
+        progress,
+      };
+    })
     .sort((a, b) => toUtcMs(a.outlook.deadline) - toUtcMs(b.outlook.deadline));
 }
 
-export function settledBonuses(cards: CardAccount[]): TrackedBonus[] {
+export function settledBonuses(
+  cards: CardAccount[],
+  expenses: Expense[] = [],
+): TrackedBonus[] {
   return cards
     .filter((card): card is CardAccount & { bonus: SignupBonus } => card.bonus !== null)
     .filter((card) => card.bonus.status !== 'tracking')
-    .map((card) => ({
-      card,
-      bonus: card.bonus,
-      outlook: bonusOutlook(card.bonus, 0),
-      label: cardLabel(card),
-    }))
+    .map((card) => {
+      const progress = readProgress(card, card.bonus, expenses);
+      return {
+        card,
+        bonus: card.bonus,
+        outlook: bonusOutlook(card.bonus, 0, today(), progress.cents),
+        label: cardLabel(card),
+        progress,
+      };
+    })
     .sort((a, b) => toUtcMs(b.outlook.deadline) - toUtcMs(a.outlook.deadline));
 }
 

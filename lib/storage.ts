@@ -86,6 +86,9 @@ function coerceBonus(value: unknown, openedDate: IsoDate): SignupBonus | null {
     spendWindowMonths: Math.max(1, Math.round(num(b.spendWindowMonths, 3))),
     startDate: date(b.startDate, openedDate),
     deadlineOverride: nullableDate(b.deadlineOverride),
+    // A v1/v2 bonus has no source and carries a hand-typed figure, so it stays
+    // manual on import rather than silently switching to a derived number.
+    progressSource: b.progressSource === 'expenses' ? 'expenses' : 'manual',
     spendProgressCents: Math.max(0, Math.round(num(b.spendProgressCents))),
     progressUpdated: nullableDate(b.progressUpdated),
     status,
@@ -437,6 +440,8 @@ export function blankBonus(card: CardAccount): SignupBonus {
     spendWindowMonths: catalog?.bonusWindowMonths ?? 3,
     startDate: card.openedDate,
     deadlineOverride: null,
+    // New bonuses derive by default: import a statement and the bar moves.
+    progressSource: 'expenses',
     spendProgressCents: 0,
     progressUpdated: null,
     status: 'tracking',

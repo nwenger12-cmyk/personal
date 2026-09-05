@@ -93,13 +93,28 @@ export function BonusProgress({
         <p className="mt-3 text-sm leading-relaxed text-muted">{bonus.notes}</p>
       ) : null}
 
-      {outlook.deadlineDerived ? (
-        <p className="mt-3 text-xs leading-relaxed text-dim">
-          Deadline derived from {formatDate(bonus.startDate)} plus{' '}
-          {bonus.spendWindowMonths} months. If your offer letter says otherwise,
-          set the exact date on the card.
-        </p>
-      ) : null}
+      <p className="mt-3 text-xs leading-relaxed text-dim">
+        {tracked.progress.source === 'expenses' ? (
+          <>
+            Progress adds up {tracked.progress.expenseCount} imported transactions
+            on this card, so importing a statement moves it on its own.
+          </>
+        ) : tracked.progress.fellBackToManual ? (
+          <>
+            Set to track imported transactions, but nothing has been imported for
+            this card yet, so the figure below is the one you entered.
+          </>
+        ) : (
+          <>Progress is the figure you entered by hand.</>
+        )}
+        {outlook.deadlineDerived ? (
+          <>
+            {' '}Deadline derived from {formatDate(bonus.startDate)} plus{' '}
+            {bonus.spendWindowMonths} months; set the exact date on the card if
+            your offer letter says otherwise.
+          </>
+        ) : null}
+      </p>
 
       {footer ? <div className="mt-4 border-t border-line pt-4">{footer}</div> : null}
     </div>

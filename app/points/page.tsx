@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useData } from '@/components/DataProvider';
 import { Badge, Button, EmptyState, Field, Note, Panel, PanelHeader, Select, Stat, TextInput } from '@/components/ui';
-import { formatDate } from '@/lib/dates';
+import { daysBetween, formatDate, today } from '@/lib/dates';
 import { centsToInput, formatCents, formatCpp, formatDollars, formatNumber, parseDollarsToCents, parseIntegerInput } from '@/lib/money';
 import { balanceViews, totalValueCents, untrackedPrograms } from '@/lib/points';
 import type { BalanceView } from '@/lib/points';
@@ -48,8 +48,13 @@ function BalanceEditor({
       <Button size="sm" variant="ghost" onClick={onRemove}>
         Stop tracking
       </Button>
-      <span className="ml-auto text-xs text-dim">
+      <span className="ml-auto flex items-center gap-2 text-xs text-dim">
         Updated <span className="font-mono">{formatDate(view.balance.updated)}</span>
+        {(() => {
+          const age = daysBetween(view.balance.updated, today());
+          if (age <= 45) return null;
+          return <Badge tone={age > 90 ? 'danger' : 'warn'}>{age} days old</Badge>;
+        })()}
       </span>
     </div>
   );
@@ -203,6 +208,10 @@ export default function PointsPage() {
       ) : null}
 
       <Note>
+        Balances are the one figure nothing can fetch for you -- no issuer
+        exposes a points API, and the services that show balances do it by
+        signing in as you. Anything over 45 days old is flagged, and the
+        dashboard reminds you.{' '}
         Fixed rates -- cash back, a travel portal multiplier -- are what the
         issuer publishes. Transfer-partner rates are marked as estimates because
         what a point is worth depends entirely on the award you book. Replace

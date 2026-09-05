@@ -47,6 +47,17 @@ export type SignupBonus = {
   startDate: IsoDate;
   /** Set when the real deadline on the offer letter differs from the default. */
   deadlineOverride: IsoDate | null;
+  /**
+   * Where the progress figure comes from.
+   *
+   * 'expenses' adds up the imported transactions on this card inside the
+   * window, so importing a statement moves the bonus forward with no second
+   * step. 'manual' pins `spendProgressCents` instead, for a card whose
+   * transactions are not being imported or when the issuer's own tally
+   * disagrees with the arithmetic.
+   */
+  progressSource: 'expenses' | 'manual';
+  /** The pinned figure. Ignored while progressSource is 'expenses'. */
   spendProgressCents: number;
   progressUpdated: IsoDate | null;
   status: BonusStatus;

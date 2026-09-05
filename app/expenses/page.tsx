@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useData } from '@/components/DataProvider';
 import { ExpenseEditor } from '@/components/ExpenseEditor';
-import { ExpenseImport } from '@/components/ExpenseImport';
 import { ExpenseTable } from '@/components/ExpenseTable';
 import { Button, Field, Panel, PanelHeader, Select, Stat, TextInput } from '@/components/ui';
 import { CATEGORY_GROUP_LABELS, categoriesByGroup } from '@/lib/categories';
@@ -27,7 +26,6 @@ export default function ExpensesPage() {
     data, ready, upsertExpense, upsertExpenses, removeExpense, updateSettings,
   } = useData();
   const [editing, setEditing] = useState<Expense | null>(null);
-  const [importing, setImporting] = useState(false);
   const [filter, setFilter] = useState<ExpenseFilter>({
     ...EMPTY_FILTER,
     year: data.settings.activeTaxYear,
@@ -99,9 +97,11 @@ export default function ExpensesPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={() => setImporting((v) => !v)}>
-            {importing ? 'Hide import' : 'Import statement'}
-          </Button>
+          {/* Importing lives in one place, where it can also move bonus
+              progress and record annual fees off the same rows. */}
+          <Link href="/import">
+            <Button>Import statements</Button>
+          </Link>
           <Button
             variant="primary"
             onClick={() => setEditing(blankExpense(defaultEntityId, today()))}
@@ -110,22 +110,6 @@ export default function ExpensesPage() {
           </Button>
         </div>
       </div>
-
-      {importing ? (
-        <ExpenseImport
-          entities={data.entities}
-          cards={data.cards}
-          rules={data.categorizationRules}
-          existing={data.expenses}
-          defaultEntityId={defaultEntityId}
-          onImport={(expenses) => {
-            upsertExpenses(expenses);
-            setImporting(false);
-            patchFilter({ needsReviewOnly: true, year: null });
-          }}
-          onClose={() => setImporting(false)}
-        />
-      ) : null}
 
       {pendingFees.length > 0 ? (
         <Panel className="border-accent/30 bg-accent/5">
@@ -277,7 +261,7 @@ export default function ExpensesPage() {
               ? {
                   title: 'No spending recorded yet',
                   description:
-                    'Import a statement from one of your cards, or add an expense by hand. Merchant rules file what they recognise so the second import is mostly done for you.',
+                    'Drop this month\u2019s statements into Import and everything below fills in \u2014 merchant rules file what they recognise, so the second import is mostly done for you.',
                 }
               : {
                   title: 'Nothing matches these filters',

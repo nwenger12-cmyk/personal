@@ -18,6 +18,44 @@ the constraint that decides what you can apply for next.
 Everything lives in your browser. There is no server, no account, and nothing
 is sent anywhere.
 
+## Keeping it current
+
+The design goal after the first setup is that maintenance is one step a month.
+
+**Drop every statement into Import at once.** Each file is matched to a card by
+the account number in its rows (Capital One and Amex put it there) or by the
+last four in the download filename (Chase names its export
+`Chase7730_Activity….CSV`). One confirm then updates three things at once,
+because all three are read off the same transactions:
+
+- **Spending** — new rows only. Anything already imported is skipped by import
+  key, including two files that overlap each other in the same run. Payments to
+  the card are dropped; refunds come in negative.
+- **Bonus progress** — adds itself up from the transactions on that card inside
+  the window. There is no second number to keep in step, and no separate import.
+- **Annual fees** — a charge described as an annual fee is recorded against the
+  card, which rolls its next-fee prediction on to the following year by itself.
+
+The preview shows exactly what each will do before anything is written, and
+nothing is committed until you confirm.
+
+**The dashboard tells you what has gone stale.** The failure mode of a tracker
+is not wrong arithmetic, it is that you stopped feeding it in July and did not
+notice. So the "Needs you" panel leads the dashboard and covers absence as well
+as deadlines:
+
+- a card with no imported transactions for over 40 days
+- a recurring charge that billed every month for three months and then stopped —
+  usually a statement that never got imported
+- a card that has never fed spending at all
+- transactions waiting for a category
+- a points balance nobody has touched in 45 days
+- fees inside their review window, and bonuses behind pace or near their deadline
+
+**What still has to be typed.** One thing: points balances. No issuer exposes a
+points API, and the services that show balances do it by storing your card
+login. Everything else follows from the statements.
+
 ## Running it
 
 ```bash
@@ -82,6 +120,13 @@ months left and a lost bonus with nine days left. Every status is computed
 against the time remaining, and the progress bar carries a marker showing where
 even spending would have put you by now. Being behind that line is what
 actually predicts a miss.
+
+Progress itself is derived from the transactions imported for that card inside
+the window, so it maintains itself. A bonus can be switched to a hand-typed
+figure for a card whose statements are not being imported, or when the issuer's
+own tally disagrees with the arithmetic. A bonus set to derive with nothing yet
+imported falls back to the typed figure and says so, rather than showing a zero
+that reads as "no progress".
 
 **5/24.** Counts personal cards opened anywhere in the last 24 months, plus
 business cards from the issuers that report them to the personal bureaus
@@ -178,14 +223,16 @@ there is no server.
 ## Layout
 
 ```
-app/            dashboard, cards, bonuses, points, expenses, taxes, settings
-components/     UI primitives, the card and expense editors, timeline, imports
+app/            dashboard, cards, bonuses, points, import, spending, taxes, settings
+components/     UI primitives, the card and expense editors, timeline, import center
 lib/
   dates.ts      UTC date math -- an open date is a calendar fact, not an instant
   fees.ts       annual fee prediction and review windows
-  bonuses.ts    spend progress, pace, deadlines
+  bonuses.ts    spend progress (derived or pinned), pace, deadlines
   rules.ts      5/24 and issuer application rules
-  csv.ts        issuer transaction imports
+  csv.ts        parsing the shapes issuers actually export
+  import.ts     file-to-card matching, fee detection, the one-confirm plan
+  attention.ts  what has gone stale, including what has stopped appearing
   points.ts     balances priced by redemption route
   catalog.ts    card catalog (starting values)
   programs.ts   rewards programs and valuations
@@ -193,5 +240,5 @@ lib/
   categorize.ts merchant rules for filing imported rows
   expenses.ts   tax-year totals, entity splits, CSV exports
   storage.ts    localStorage, validation, import/export
-tests/          138 tests over the math above
+tests/          184 tests over the math above
 ```

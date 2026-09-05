@@ -5,9 +5,10 @@ import {
   bonusOutlook,
   outstandingSpendCents,
   pendingRewards,
+  readProgress,
 } from '@/lib/bonuses';
-import { blankCard } from '@/lib/storage';
-import type { CardAccount, SignupBonus } from '@/lib/types';
+import { blankCard, blankExpense } from '@/lib/storage';
+import type { CardAccount, Expense, SignupBonus } from '@/lib/types';
 
 const WARN = 30;
 
@@ -20,6 +21,7 @@ function bonus(overrides: Partial<SignupBonus> = {}): SignupBonus {
     spendWindowMonths: 3,
     startDate: '2024-01-01',
     deadlineOverride: null,
+    progressSource: 'manual',
     spendProgressCents: 0,
     progressUpdated: null,
     status: 'tracking',
@@ -178,5 +180,94 @@ describe('outstanding totals', () => {
     );
     expect(outstandingSpendCents(list)).toBe(500_000);
     expect(pendingRewards(list).points).toBe(60_000);
+  });
+});
+
+describe('derived progress', () => {
+  function card(id: string, b: SignupBonus): CardAccount {
+    return { ...blankCard('2024-01-01'), id, productName: id, bonus: b };
+  }
+  function spend(cardId: string | null, date: string, cents: number): Expense {
+    return { ...blankExpense('e1', date), cardId, amountCents: cents };
+  }
+
+  const tracking = bonus({
+    startDate: '2024-01-01',
+    spendWindowMonths: 3,
+    spendRequiredCents: 800_000,
+    progressSource: 'expenses',
+    spendProgressCents: 0,
+  });
+
+  it('adds up imported transactions on that card inside the window', () => {
+    const c = card('c1', tracking);
+    const reading = readProgress(c, tracking, [
+      spend('c1', '2024-01-15', 300_000),
+      spend('c1', '2024-02-15', 200_000),
+    ]);
+    expect(reading.cents).toBe(500_000);
+    expect(reading.source).toBe('expenses');
+    expect(reading.expenseCount).toBe(2);
+  });
+
+  it('ignores spend on a different card', () => {
+    const c = card('c1', tracking);
+    const reading = readProgress(c, tracking, [
+      spend('c1', '2024-01-15', 300_000),
+      spend('c2', '2024-01-15', 999_000),
+      spend(null, '2024-01-15', 999_000),
+    ]);
+    expect(reading.cents).toBe(300_000);
+  });
+
+  it('ignores spend outside the window', () => {
+    const c = card('c1', tracking);
+    const reading = readProgress(c, tracking, [
+      spend('c1', '2023-12-31', 100_000),
+      spend('c1', '2024-01-01', 100_000),
+      spend('c1', '2024-04-01', 100_000),
+      spend('c1', '2024-04-02', 100_000),
+    ]);
+    // The start date and the deadline both count; a day either side does not.
+    expect(reading.cents).toBe(200_000);
+  });
+
+  it('nets refunds off, the way an issuer counts', () => {
+    const c = card('c1', tracking);
+    const reading = readProgress(c, tracking, [
+      spend('c1', '2024-01-15', 300_000),
+      spend('c1', '2024-02-01', -50_000),
+    ]);
+    expect(reading.cents).toBe(250_000);
+  });
+
+  it('falls back to the pinned figure when nothing has been imported', () => {
+    // Showing a derived zero would read as "no progress" when the truth is
+    // "nothing to derive from yet".
+    const withFigure = { ...tracking, spendProgressCents: 412_000 };
+    const reading = readProgress(card('c1', withFigure), withFigure, []);
+    expect(reading.cents).toBe(412_000);
+    expect(reading.source).toBe('manual');
+    expect(reading.fellBackToManual).toBe(true);
+  });
+
+  it('uses the pinned figure when set to manual, whatever was imported', () => {
+    const manual = { ...tracking, progressSource: 'manual' as const, spendProgressCents: 100 };
+    const reading = readProgress(card('c1', manual), manual, [
+      spend('c1', '2024-01-15', 300_000),
+    ]);
+    expect(reading.cents).toBe(100);
+    expect(reading.source).toBe('manual');
+  });
+
+  it('drives the outlook through activeBonuses', () => {
+    const list = activeBonuses(
+      [card('c1', tracking)],
+      30,
+      '2024-02-01',
+      [spend('c1', '2024-01-15', 800_000)],
+    );
+    expect(list[0].outlook.progressCents).toBe(800_000);
+    expect(list[0].outlook.paceStatus).toBe('earned');
   });
 });
