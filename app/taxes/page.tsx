@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useData } from '@/components/DataProvider';
-import { Badge, Button, EmptyState, Field, Note, Panel, PanelHeader, Select, Stat } from '@/components/ui';
-import { formatCents, formatDollars } from '@/lib/money';
+import { Badge, Button, EmptyState, Field, Note, Panel, PanelHeader, Select, Stat, StatRow } from '@/components/ui';
+import { formatCents, formatCount, formatDollars } from '@/lib/money';
 import {
   deductibleCents,
   expensesToCsv,
@@ -58,7 +58,7 @@ function EntityBlock({ summary }: { summary: EntitySummary }) {
           <span className="text-right">
             <span className="block font-mono text-xl font-semibold text-text">
               {summary.entity.kind === 'personal'
-                ? formatCents(summary.grossCents)
+                ? formatCents(summary.totalSpentCents)
                 : formatCents(summary.deductibleCents)}
             </span>
             <span className="block font-mono text-xs text-dim">
@@ -237,21 +237,24 @@ export default function TaxesPage() {
         />
       ) : (
         <>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <StatRow>
             <Stat
               label="Total spend"
-              value={formatDollars(summary.grossCents)}
+              value={summary.grossCents}
+              format={formatDollars}
               hint={`${summary.count} categorised transactions`}
             />
             <Stat
               label="Business deductible"
-              value={formatDollars(businessDeductible)}
+              value={businessDeductible}
+              format={formatDollars}
               tone="ok"
               hint="across your business entities"
             />
             <Stat
               label="Uncategorised"
-              value={formatDollars(summary.uncategorizedCents)}
+              value={summary.uncategorizedCents}
+              format={formatDollars}
               tone={summary.uncategorizedCount > 0 ? 'danger' : 'ok'}
               hint={
                 summary.uncategorizedCount > 0 ? (
@@ -265,10 +268,11 @@ export default function TaxesPage() {
             />
             <Stat
               label="Entities"
-              value={String(summary.entities.length)}
+              value={summary.entities.length}
+              format={formatCount}
               hint="each files its own totals"
             />
-          </div>
+          </StatRow>
 
           <Panel>
             <PanelHeader

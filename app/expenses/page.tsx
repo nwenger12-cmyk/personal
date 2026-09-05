@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { useData } from '@/components/DataProvider';
 import { ExpenseEditor } from '@/components/ExpenseEditor';
 import { ExpenseTable } from '@/components/ExpenseTable';
-import { Button, Field, Panel, PanelHeader, Select, Stat, TextInput } from '@/components/ui';
+import { Button, Field, Panel, PanelHeader, Select, Stat, StatRow, TextInput } from '@/components/ui';
 import { CATEGORY_GROUP_LABELS, categoriesByGroup } from '@/lib/categories';
 import { today } from '@/lib/dates';
 import {
@@ -17,7 +17,7 @@ import {
 } from '@/lib/expenses';
 import type { ExpenseFilter } from '@/lib/expenses';
 import { cardLabel } from '@/lib/fees';
-import { formatDollars } from '@/lib/money';
+import { formatCount, formatDollars } from '@/lib/money';
 import { blankExpense } from '@/lib/storage';
 import type { Expense } from '@/lib/types';
 
@@ -141,25 +141,28 @@ export default function ExpensesPage() {
         </Panel>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <StatRow>
         <Stat
           label="Shown"
-          value={formatDollars(totals.gross)}
+          value={totals.gross}
+          format={formatDollars}
           hint={`${visible.length} ${visible.length === 1 ? 'transaction' : 'transactions'}`}
         />
         <Stat
           label="Deductible"
-          value={formatDollars(totals.deductible)}
+          value={totals.deductible}
+          format={formatDollars}
           tone="ok"
           hint="after each percentage; personal counts as zero"
         />
         <Stat
           label="Needs review"
-          value={String(reviewCount)}
+          value={reviewCount}
+          format={formatCount}
           tone={reviewCount > 0 ? 'warn' : 'ok'}
           hint={reviewCount > 0 ? 'excluded from totals if left uncategorised' : 'all filed'}
         />
-      </div>
+      </StatRow>
 
       <Panel className="space-y-4">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

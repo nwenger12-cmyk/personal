@@ -63,7 +63,14 @@ describe('coerceData', () => {
   it('keeps settings inside sane bounds', () => {
     const data = coerceData({ cards: [], settings: { feeReviewLeadDays: -3, theme: 'neon' } });
     expect(data.settings.feeReviewLeadDays).toBe(1);
-    expect(data.settings.theme).toBe('system');
+    // An unrecognised theme falls back to the default, which is dark -- the
+    // palette is built around a near-black ground, and light is the alternate.
+    expect(data.settings.theme).toBe('dark');
+  });
+
+  it('keeps a valid theme choice', () => {
+    expect(coerceData({ cards: [], settings: { theme: 'light' } }).settings.theme).toBe('light');
+    expect(coerceData({ cards: [], settings: { theme: 'system' } }).settings.theme).toBe('system');
   });
 
   it('survives a round trip', () => {

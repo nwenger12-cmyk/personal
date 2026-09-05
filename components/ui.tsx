@@ -1,23 +1,28 @@
 'use client';
 
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react';
+import { AnimatedBar, CountUp, motion, useReducedMotion } from './motion';
 
 /**
- * The shared primitives. Every one of them takes its colors from the semantic
- * tokens in globals.css -- no literal hex, no `text-white`, no `slate-700` --
- * so light and dark stay in sync without any component knowing which is on.
+ * The shared primitives.
+ *
+ * Two rules hold the look together. Colours come only from the semantic tokens
+ * in globals.css -- no literal hex, no `text-white` -- so dark and light stay
+ * in step without any component knowing which is on. And structure is carried
+ * by space and hairlines rather than by boxes inside boxes: a panel is a tinted
+ * surface with one faint edge, not a card with a border and a shadow.
  */
 
 export type Tone = 'neutral' | 'accent' | 'ok' | 'warn' | 'danger';
 
-// A label on a 12% wash of its own color uses the -ink strength, which is the
-// hue pushed to text weight. The base strength on a pale wash fails contrast.
+// A label on a wash of its own colour uses the -ink strength, which is the hue
+// pushed to text weight. The base strength on a wash fails contrast.
 const BADGE_TONE: Record<Tone, string> = {
-  neutral: 'bg-surface-2 text-muted border-line',
-  accent: 'bg-accent/12 text-accent-ink border-accent/25',
-  ok: 'bg-ok/12 text-ok-ink border-ok/25',
-  warn: 'bg-warn/12 text-warn-ink border-warn/30',
-  danger: 'bg-danger/12 text-danger-ink border-danger/30',
+  neutral: 'text-dim ring-line',
+  accent: 'text-accent-ink ring-accent/30 bg-accent/10',
+  ok: 'text-ok-ink ring-ok/30 bg-ok/10',
+  warn: 'text-warn-ink ring-warn/30 bg-warn/10',
+  danger: 'text-danger-ink ring-danger/30 bg-danger/10',
 };
 
 export function Badge({
@@ -31,7 +36,7 @@ export function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ${
         mono ? 'font-mono' : ''
       } ${BADGE_TONE[tone]}`}
     >
@@ -49,7 +54,7 @@ export function Panel({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-line bg-surface p-5 ${className}`}
+      className={`rounded-2xl bg-surface/70 p-6 ring-1 ring-line backdrop-blur-sm ${className}`}
     >
       {children}
     </section>
@@ -66,11 +71,13 @@ export function PanelHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-4 flex items-start justify-between gap-4">
+    <div className="mb-5 flex items-start justify-between gap-6">
       <div className="min-w-0">
-        <h2 className="text-base font-semibold text-text">{title}</h2>
+        <h2 className="text-[13px] font-semibold uppercase tracking-label text-dim">
+          {title}
+        </h2>
         {description ? (
-          <p className="mt-1 text-sm leading-relaxed text-muted">{description}</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">{description}</p>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
@@ -78,41 +85,88 @@ export function PanelHeader({
   );
 }
 
-/** A headline number. `value` is always a machine value, so it is always mono. */
+/** The section heading used between blocks on a page. */
+export function SectionLabel({
+  children,
+  action,
+}: {
+  children: ReactNode;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="mb-4 flex items-end justify-between gap-4">
+      <h2 className="text-[13px] font-semibold uppercase tracking-label text-dim">
+        {children}
+      </h2>
+      {action}
+    </div>
+  );
+}
+
+const STAT_TONE: Record<Tone, string> = {
+  neutral: 'text-text',
+  accent: 'text-accent-ink',
+  ok: 'text-ok-ink',
+  warn: 'text-warn-ink',
+  danger: 'text-danger-ink',
+};
+
+/**
+ * A headline figure. `value` is a number plus a formatter rather than a string
+ * so it can count up to its value; anything genuinely non-numeric passes
+ * `display` instead and renders static.
+ */
 export function Stat({
   label,
   value,
+  format,
+  display,
   hint,
   tone = 'neutral',
 }: {
   label: string;
-  value: string;
+  value?: number;
+  format?: (value: number) => string;
+  display?: string;
   hint?: ReactNode;
   tone?: Tone;
 }) {
-  const valueTone =
-    tone === 'neutral' ? 'text-text'
-    : tone === 'accent' ? 'text-accent-ink'
-    : tone === 'ok' ? 'text-ok-ink'
-    : tone === 'warn' ? 'text-warn-ink'
-    : 'text-danger-ink';
-
   return (
-    <div className="rounded-xl border border-line bg-surface-2 p-4">
-      <div className="text-xs font-medium uppercase tracking-wide text-dim">{label}</div>
-      <div className={`mt-1 font-mono text-2xl font-semibold tabular-nums ${valueTone}`}>
-        {value}
+    <div className="min-w-0">
+      <div className="text-[11px] font-medium uppercase tracking-label text-dim">
+        {label}
       </div>
-      {hint ? <div className="mt-1 text-xs leading-relaxed text-dim">{hint}</div> : null}
+      <div
+        className={`mt-2 font-mono text-3xl font-semibold tracking-tighter tabular-nums ${STAT_TONE[tone]}`}
+      >
+        {display !== undefined || value === undefined || !format ? (
+          display ?? '--'
+        ) : (
+          <CountUp value={value} format={format} />
+        )}
+      </div>
+      {hint ? (
+        <div className="mt-1.5 text-xs leading-relaxed text-dim">{hint}</div>
+      ) : null}
+    </div>
+  );
+}
+
+/** Stats sit in a row divided by hairlines rather than in a grid of boxes. */
+export function StatRow({ children }: { children: ReactNode }) {
+  return (
+    <div className="grid gap-x-8 gap-y-6 rounded-2xl bg-surface/50 p-6 ring-1 ring-line sm:grid-cols-2 lg:grid-cols-4 lg:divide-x lg:divide-line [&>*:not(:first-child)]:lg:pl-8">
+      {children}
     </div>
   );
 }
 
 const BUTTON_VARIANT = {
-  primary: 'bg-accent text-on-accent border-accent hover:opacity-90',
-  secondary: 'bg-surface text-text border-line-strong hover:bg-surface-2',
-  ghost: 'bg-transparent text-muted border-transparent hover:bg-surface-2 hover:text-text',
-  danger: 'bg-transparent text-danger-ink border-danger/40 hover:bg-danger/10',
+  primary:
+    'bg-accent text-on-accent ring-1 ring-accent/60 shadow-glow hover:brightness-110',
+  secondary: 'bg-surface-2 text-text ring-1 ring-line-strong hover:bg-surface-2/70',
+  ghost: 'bg-transparent text-muted ring-1 ring-transparent hover:bg-surface-2 hover:text-text',
+  danger: 'bg-transparent text-danger-ink ring-1 ring-danger/40 hover:bg-danger/10',
 } as const;
 
 export function Button({
@@ -124,12 +178,16 @@ export function Button({
   variant?: keyof typeof BUTTON_VARIANT;
   size?: 'sm' | 'md';
 }) {
-  const sizing = size === 'sm' ? 'px-2.5 py-1 text-xs' : 'px-3.5 py-2 text-sm';
+  const reduce = useReducedMotion();
+  const sizing = size === 'sm' ? 'px-2.5 py-1 text-xs' : 'px-4 py-2 text-sm';
   return (
-    <button
+    <motion.button
       type="button"
-      className={`inline-flex items-center justify-center gap-1.5 rounded-lg border font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${sizing} ${BUTTON_VARIANT[variant]} ${className}`}
-      {...props}
+      whileHover={reduce ? undefined : { y: -1 }}
+      whileTap={reduce ? undefined : { scale: 0.97 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${sizing} ${BUTTON_VARIANT[variant]} ${className}`}
+      {...(props as React.ComponentProps<typeof motion.button>)}
     />
   );
 }
@@ -149,20 +207,22 @@ export function Field({
 }) {
   return (
     <label className="block" htmlFor={htmlFor}>
-      <span className="mb-1.5 block text-sm font-medium text-text">{label}</span>
+      <span className="mb-2 block text-[11px] font-medium uppercase tracking-label text-dim">
+        {label}
+      </span>
       {children}
       {error ? (
-        <span className="mt-1 block text-xs text-danger-ink">{error}</span>
+        <span className="mt-1.5 block text-xs text-danger-ink">{error}</span>
       ) : hint ? (
-        <span className="mt-1 block text-xs leading-relaxed text-dim">{hint}</span>
+        <span className="mt-1.5 block text-xs leading-relaxed text-dim">{hint}</span>
       ) : null}
     </label>
   );
 }
 
 const CONTROL =
-  'w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-text ' +
-  'placeholder:text-dim outline-none transition-colors focus:border-accent';
+  'w-full rounded-lg bg-surface-2/60 px-3 py-2 text-sm text-text ring-1 ring-line ' +
+  'placeholder:text-dim outline-none transition-all focus:bg-surface-2 focus:ring-accent/60';
 
 export function TextInput({
   mono = false,
@@ -221,8 +281,8 @@ const BAR_TONE: Record<Tone, string> = {
 
 /**
  * A progress bar with an optional pace marker: the thin line showing where you
- * would be if you had spent evenly across the window. Being behind that line
- * is the thing that actually predicts a missed bonus.
+ * would be if you had spent evenly across the window. Being behind that line is
+ * the thing that actually predicts a missed bonus.
  */
 export function ProgressBar({
   ratio,
@@ -238,21 +298,18 @@ export function ProgressBar({
   const pct = Math.max(0, Math.min(1, ratio)) * 100;
   return (
     <div
-      className="relative h-2 w-full overflow-hidden rounded-full bg-surface-2"
+      className="relative h-1.5 w-full overflow-hidden rounded-full bg-surface-2 ring-1 ring-line"
       role="progressbar"
       aria-valuenow={Math.round(pct)}
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label={label}
     >
-      <div
-        className={`h-full rounded-full transition-[width] duration-300 ${BAR_TONE[tone]}`}
-        style={{ width: `${pct}%` }}
-      />
+      <AnimatedBar ratio={ratio} className={`h-full rounded-full ${BAR_TONE[tone]}`} />
       {typeof marker === 'number' && marker > 0 && marker < 1 ? (
         <span
           aria-hidden
-          className="absolute inset-y-0 w-px bg-text/40"
+          className="absolute inset-y-0 w-px bg-text/50"
           style={{ left: `${Math.min(100, marker * 100)}%` }}
         />
       ) : null}
@@ -270,12 +327,12 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-dashed border-line-strong bg-surface-2/50 px-6 py-10 text-center">
+    <div className="rounded-2xl bg-surface/40 px-6 py-14 text-center ring-1 ring-dashed ring-line-strong">
       <h3 className="text-sm font-semibold text-text">{title}</h3>
-      <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-muted">
+      <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted">
         {description}
       </p>
-      {action ? <div className="mt-4 flex justify-center">{action}</div> : null}
+      {action ? <div className="mt-5 flex justify-center">{action}</div> : null}
     </div>
   );
 }
@@ -283,7 +340,7 @@ export function EmptyState({
 /** A short caveat attached to a number the app estimated rather than knows. */
 export function Note({ children }: { children: ReactNode }) {
   return (
-    <p className="rounded-lg border border-line bg-surface-2 px-3 py-2 text-xs leading-relaxed text-muted">
+    <p className="rounded-xl bg-surface-2/50 px-4 py-3 text-xs leading-relaxed text-muted ring-1 ring-line">
       {children}
     </p>
   );

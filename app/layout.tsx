@@ -12,19 +12,22 @@ export const metadata: Metadata = {
 };
 
 /**
- * Reads the stored theme choice before first paint so an explicit light/dark
- * pick does not flash the other theme on the way in. `system` deliberately
- * leaves the attribute off and lets the media query in globals.css decide.
+ * Resolves the stored theme before first paint, so choosing light does not
+ * flash dark on the way in. `:root` is already dark, so the only work here is
+ * stamping `light` when that is what was chosen -- including when the choice
+ * is "system" and the OS says light.
  */
 const THEME_SCRIPT = `
 (function () {
   try {
     var raw = localStorage.getItem(${JSON.stringify(STORAGE_KEY)});
-    if (!raw) return;
-    var theme = (JSON.parse(raw).settings || {}).theme;
-    if (theme === 'light' || theme === 'dark') {
-      document.documentElement.setAttribute('data-theme', theme);
+    var theme = raw ? (JSON.parse(raw).settings || {}).theme : 'dark';
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: light)').matches
+        ? 'light'
+        : 'dark';
     }
+    document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
   } catch (e) {}
 })();
 `.trim();

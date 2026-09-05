@@ -40,14 +40,14 @@ export function ExpenseTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[56rem] text-sm">
+      <table className="w-full min-w-[62rem] text-sm">
         <thead>
-          <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-dim">
+          <tr className="border-b border-line text-left text-[11px] uppercase tracking-label text-dim">
             <th scope="col" className="pb-2 pr-3 font-medium">Date</th>
             <th scope="col" className="pb-2 pr-3 font-medium">Merchant</th>
             <th scope="col" className="pb-2 pr-3 text-right font-medium">Amount</th>
-            <th scope="col" className="pb-2 pr-3 font-medium">Entity</th>
-            <th scope="col" className="pb-2 pr-3 font-medium">Category</th>
+            <th scope="col" className="w-[8rem] pb-2 pr-3 font-medium">Entity</th>
+            <th scope="col" className="w-[13rem] pb-2 pr-3 font-medium">Category</th>
             <th scope="col" className="pb-2 pr-3 text-right font-medium">Deductible</th>
             <th scope="col" className="pb-2 font-medium">
               <span className="sr-only">Actions</span>
@@ -95,7 +95,7 @@ export function ExpenseTable({
                     onChange={(e) =>
                       onChange({ ...expense, entityId: e.target.value, reviewed: true })
                     }
-                    className="w-full max-w-[9rem] rounded-md border border-line bg-surface px-2 py-1 text-xs text-text outline-none focus:border-accent"
+                    className="w-full min-w-[7.5rem] rounded-md bg-surface-2/60 px-2 py-1 text-xs text-text ring-1 ring-line outline-none focus:ring-accent/60"
                   >
                     {entities.map((entity) => (
                       <option key={entity.id} value={entity.id}>
@@ -112,7 +112,7 @@ export function ExpenseTable({
                     onChange={(e) =>
                       onChange({ ...withCategory(expense, e.target.value), reviewed: true })
                     }
-                    className="w-full max-w-[13rem] rounded-md border border-line bg-surface px-2 py-1 text-xs text-text outline-none focus:border-accent"
+                    className="w-full min-w-[12rem] rounded-md bg-surface-2/60 px-2 py-1 text-xs text-text ring-1 ring-line outline-none focus:ring-accent/60"
                   >
                     {categoriesByGroup().map(({ group, categories }) => (
                       <optgroup key={group} label={CATEGORY_GROUP_LABELS[group]}>

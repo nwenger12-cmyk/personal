@@ -7,7 +7,7 @@ import { formatDate } from '@/lib/dates';
 import { cardLabel } from '@/lib/fees';
 import { analyzeFile, buildPlan } from '@/lib/import';
 import type { FileAssignment } from '@/lib/import';
-import { formatCents, formatDollars } from '@/lib/money';
+import { formatCents, formatCount, formatDollars } from '@/lib/money';
 
 type LoadedFile = { id: string; name: string; text: string };
 
@@ -312,24 +312,28 @@ export function ImportCenter() {
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <Stat
                   label="New transactions"
-                  value={String(plan.expenses.length)}
+                  value={plan.expenses.length}
+                  format={formatCount}
                   hint={formatDollars(plan.totalCents)}
                   tone="accent"
                 />
                 <Stat
                   label="Auto-filed"
-                  value={String(plan.autoFiled)}
+                  value={plan.autoFiled}
+                  format={formatCount}
                   hint="by merchant rules"
                   tone="ok"
                 />
                 <Stat
                   label="Already imported"
-                  value={String(plan.duplicates)}
+                  value={plan.duplicates}
+                  format={formatCount}
                   hint="skipped, not duplicated"
                 />
                 <Stat
                   label="Payments"
-                  value={String(plan.payments)}
+                  value={plan.payments}
+                  format={formatCount}
                   hint="dropped, not expenses"
                 />
               </div>

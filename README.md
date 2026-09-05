@@ -18,6 +18,49 @@ the constraint that decides what you can apply for next.
 Everything lives in your browser. There is no server, no account, and nothing
 is sent anywhere.
 
+## The interface
+
+Dark by default, one accent, and structure carried by space and hairlines
+rather than by boxes inside boxes. Light is available in Settings; "System"
+follows the OS.
+
+Colour comes only from semantic tokens defined once in `app/globals.css` —
+no literal hex, no `text-white`, nothing that has to be kept in sync by hand.
+Exactly one thing decides the theme: the `data-theme` attribute on `<html>`.
+`:root` carries the dark palette, so the first paint is dark with no attribute
+and no flash, and a stored preference of "system" is resolved to a concrete
+`light` or `dark` in JS. There is no `prefers-color-scheme` block, because two
+sources of truth is how a theme ends up disagreeing with itself, and no
+component branches on theme.
+
+### Motion
+
+Animation uses [Motion](https://motion.dev) (`motion/react`), and all of it
+lives in `components/motion.tsx`:
+
+- content fades and rises on mount, lists stagger their rows in
+- headline figures count up to their value, driven through a MotionValue so a
+  60-frame count is not 60 React re-renders
+- progress bars spring to their ratio — the slight overshoot is what makes a
+  value feel like it landed
+- the active nav item's indicator travels between tabs via `layoutId` rather
+  than cross-fading, which is the one place motion actually carries meaning:
+  it shows where you came from
+
+Two rules keep it from becoming a liability:
+
+**Everything animates on mount, never on scroll.** A scroll-triggered reveal
+leaves content at opacity zero until an intersection fires, so a missed
+trigger, a print, or a full-page capture loses it outright. Nothing gates
+content on having been seen.
+
+**Every animated component calls `useReducedMotion()`.** The
+`prefers-reduced-motion` sweep in `globals.css` is CSS-only and cannot reach
+anything JS-driven, so each component degrades to an instant, final-state
+render — not to a shorter animation, and never to a missing element. A new
+animated component that skips that hook silently opts the app out of an
+accessibility behaviour the rest of it honours.
+
 ## Keeping it current
 
 The design goal after the first setup is that maintenance is one step a month.
@@ -224,7 +267,7 @@ there is no server.
 
 ```
 app/            dashboard, cards, bonuses, points, import, spending, taxes, settings
-components/     UI primitives, the card and expense editors, timeline, import center
+components/     UI primitives, motion, the editors, timeline, import center
 lib/
   dates.ts      UTC date math -- an open date is a calendar fact, not an instant
   fees.ts       annual fee prediction and review windows
@@ -240,5 +283,5 @@ lib/
   categorize.ts merchant rules for filing imported rows
   expenses.ts   tax-year totals, entity splits, CSV exports
   storage.ts    localStorage, validation, import/export
-tests/          184 tests over the math above
+tests/          185 tests over the math above
 ```

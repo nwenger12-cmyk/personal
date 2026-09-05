@@ -52,7 +52,17 @@ const config: Config = {
           'Liberation Mono', 'monospace',
         ],
       },
-      borderRadius: { xl: '0.75rem', '2xl': '1rem' },
+      borderRadius: { xl: '0.75rem', '2xl': '1rem', '3xl': '1.5rem' },
+      letterSpacing: {
+        // Small uppercase labels need opening up; big numerals need closing in.
+        label: '0.14em',
+        tighter: '-0.03em',
+      },
+      boxShadow: {
+        // The accent used as light rather than as fill.
+        glow: '0 0 0 1px rgb(var(--accent) / 0.25), 0 0 28px -6px rgb(var(--accent) / 0.45)',
+        panel: '0 1px 0 0 rgb(var(--line) / 0.6)',
+      },
     },
   },
   plugins: [],

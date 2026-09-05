@@ -3,114 +3,120 @@
 @tailwind utilities;
 
 /*
- * Light is the default. Dark follows the OS unless the user picks a theme in
- * Settings, which stamps `data-theme` on <html> and wins over the media query.
- * Both selectors redefine the SAME variable names -- nothing below this block
- * and no component knows which theme is active.
+ * Dark is the default here, and light is the alternate. That is the opposite
+ * of the usual advice and it is deliberate: this is a private tool with one
+ * user, opened to check a number, and the whole design leans on a near-black
+ * ground with one luminous accent.
+ *
+ * Exactly one thing decides which is active: the `data-theme` attribute on
+ * <html>. `:root` carries the dark palette, so the very first paint is dark
+ * with no attribute set and no flash. A stored preference of "system" is
+ * resolved to a concrete `light` or `dark` in JS -- there is no
+ * prefers-color-scheme block, because two sources of truth is how a theme
+ * ends up disagreeing with itself. No component branches on theme.
  */
 :root {
-  --bg: 248 250 252;
-  --surface: 255 255 255;
-  --surface-2: 244 246 250;
-  --line: 226 232 240;
-  --line-strong: 203 213 225;
+  --bg: 7 9 14;
+  --bg-glow: 34 211 238;      /* the accent, used only at very low alpha */
+  --surface: 13 17 25;
+  --surface-2: 20 26 37;
+  --line: 30 38 52;
+  --line-strong: 48 60 79;
 
-  --text: 15 23 42;
-  --muted: 71 85 105;
-  --dim: 100 116 139;      /* the quiet floor: 4.6:1 on --surface. Nothing dimmer. */
+  --text: 233 240 248;
+  --muted: 150 166 187;
+  --dim: 126 143 165;        /* the quiet floor: 4.6:1 on --surface */
 
-  --accent: 79 70 229;
-  --accent-ink: 67 56 202;
-  --on-accent: 255 255 255;
+  --accent: 34 211 238;
+  --accent-ink: 103 232 249;
+  --on-accent: 5 12 16;
 
-  --ok: 5 150 105;
-  --ok-ink: 4 120 87;
-  --on-ok: 255 255 255;
-
-  --warn: 217 119 6;
-  --warn-ink: 180 83 9;
-  --on-warn: 255 255 255;
-
-  --danger: 220 38 38;
-  --danger-ink: 185 28 28;
-  --on-danger: 255 255 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: 9 12 20;
-    --surface: 18 23 34;
-    --surface-2: 26 32 46;
-    --line: 39 47 64;
-    --line-strong: 55 65 85;
-
-    --text: 236 240 248;
-    --muted: 163 175 194;
-    --dim: 138 150 170;
-
-    --accent: 129 140 248;
-    --accent-ink: 165 180 252;
-    --on-accent: 12 16 26;
-
-    --ok: 52 211 153;
-    --ok-ink: 110 231 183;
-    --on-ok: 6 24 20;
-
-    --warn: 251 191 36;
-    --warn-ink: 253 214 118;
-    --on-warn: 28 20 4;
-
-    --danger: 248 113 113;
-    --danger-ink: 252 165 165;
-    --on-danger: 32 10 10;
-  }
-}
-
-:root[data-theme='dark'] {
-  --bg: 9 12 20;
-  --surface: 18 23 34;
-  --surface-2: 26 32 46;
-  --line: 39 47 64;
-  --line-strong: 55 65 85;
-
-  --text: 236 240 248;
-  --muted: 163 175 194;
-  --dim: 138 150 170;
-
-  --accent: 129 140 248;
-  --accent-ink: 165 180 252;
-  --on-accent: 12 16 26;
-
-  --ok: 52 211 153;
-  --ok-ink: 110 231 183;
-  --on-ok: 6 24 20;
+  --ok: 45 212 191;
+  --ok-ink: 94 234 212;
+  --on-ok: 4 20 18;
 
   --warn: 251 191 36;
   --warn-ink: 253 214 118;
   --on-warn: 28 20 4;
 
-  --danger: 248 113 113;
-  --danger-ink: 252 165 165;
-  --on-danger: 32 10 10;
+  --danger: 251 113 133;
+  --danger-ink: 253 164 175;
+  --on-danger: 32 8 14;
+}
+
+:root[data-theme='light'] {
+  --bg: 250 251 253;
+  --bg-glow: 8 145 178;
+  --surface: 255 255 255;
+  --surface-2: 244 247 250;
+  --line: 224 231 239;
+  --line-strong: 199 210 224;
+
+  --text: 12 18 28;
+  --muted: 66 82 102;
+  --dim: 94 110 130;
+
+  --accent: 8 145 178;
+  --accent-ink: 14 116 144;
+  --on-accent: 255 255 255;
+
+  --ok: 13 148 136;
+  --ok-ink: 15 118 110;
+  --on-ok: 255 255 255;
+
+  --warn: 202 138 4;
+  --warn-ink: 161 98 7;
+  --on-warn: 255 255 255;
+
+  --danger: 225 29 72;
+  --danger-ink: 190 18 60;
+  --on-danger: 255 255 255;
 }
 
 html {
-  color-scheme: light;
+  color-scheme: dark;
   background-color: rgb(var(--bg));
 }
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme='light']) { color-scheme: dark; }
-}
-html[data-theme='dark'] { color-scheme: dark; }
+html[data-theme='light'] { color-scheme: light; }
 
 body {
   background-color: rgb(var(--bg));
   color: rgb(var(--text));
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Tabular figures everywhere a number is compared down a column. */
+/*
+ * One faint wash of the accent behind everything, anchored top-centre. It is
+ * fixed rather than scrolling so the page reads as a surface lit from above
+ * rather than as a gradient that slides past.
+ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(60rem 32rem at 50% -12rem, rgb(var(--bg-glow) / 0.09), transparent 70%),
+    radial-gradient(40rem 24rem at 88% 8%, rgb(var(--bg-glow) / 0.045), transparent 70%);
+}
+body > * { position: relative; z-index: 1; }
+
+/* Numbers are compared down columns everywhere in this app. */
 .font-mono { font-variant-numeric: tabular-nums; }
+
+/* A hairline that fades out at both ends -- the main structural divider. */
+.rule {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgb(var(--line-strong)) 12%,
+    rgb(var(--line-strong)) 88%,
+    transparent
+  );
+}
 
 /*
  * One focus ring for the whole app, with !important so it beats the
@@ -120,12 +126,17 @@ body {
 :focus-visible {
   outline: 2px solid rgb(var(--accent)) !important;
   outline-offset: 2px !important;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 /*
- * Collapse motion rather than removing it: transition/animation events must
- * still fire, or anything whose completion handler advances state hangs.
+ * Collapse motion rather than removing it: transition and animation events
+ * must still fire, or anything whose completion handler advances state hangs.
+ *
+ * This sweep is CSS-only and cannot reach JS-driven animation. Every animated
+ * component in components/motion.tsx calls motion's own useReducedMotion()
+ * hook for that reason -- if a new one is added, it has to do the same or it
+ * silently opts out of this.
  */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -134,14 +145,19 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  body::before { display: none; }
 }
 
-/* Date inputs render a near-invisible picker icon on a dark ground otherwise. */
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme='light']) input[type='date']::-webkit-calendar-picker-indicator {
-    filter: invert(0.8);
-  }
+/* The native picker glyph is invisible against a dark field otherwise. */
+input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(0.75);
+  cursor: pointer;
 }
-html[data-theme='dark'] input[type='date']::-webkit-calendar-picker-indicator {
-  filter: invert(0.8);
+html[data-theme='light'] input[type='date']::-webkit-calendar-picker-indicator {
+  filter: none;
+}
+
+::selection {
+  background: rgb(var(--accent) / 0.28);
+  color: rgb(var(--text));
 }

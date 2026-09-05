@@ -203,7 +203,9 @@ export type Settings = {
 };
 
 export const DEFAULT_SETTINGS: Settings = {
-  theme: 'system',
+  // Dark by default, not "system": the palette is built around a near-black
+  // ground, and light is the deliberate alternate rather than the baseline.
+  theme: 'dark',
   feeReviewLeadDays: 45,
   bonusWarnDays: 30,
   activeTaxYear: new Date().getFullYear(),

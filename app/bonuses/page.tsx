@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useData } from '@/components/DataProvider';
 import { BonusProgress, rewardLabel } from '@/components/BonusProgress';
-import { Badge, Button, EmptyState, Field, Panel, PanelHeader, Stat, TextInput } from '@/components/ui';
+import { Badge, Button, EmptyState, Field, Panel, PanelHeader, Stat, StatRow, TextInput } from '@/components/ui';
 import { activeBonuses, outstandingSpendCents, pendingRewards, settledBonuses } from '@/lib/bonuses';
 import type { TrackedBonus } from '@/lib/bonuses';
 import { formatDate, today } from '@/lib/dates';
-import { centsToInput, formatCents, formatDollars, parseDollarsToCents } from '@/lib/money';
+import { centsToInput, formatCents, formatDollars, formatNumber, parseDollarsToCents } from '@/lib/money';
 import type { CardAccount } from '@/lib/types';
 
 function BonusActions({
@@ -148,26 +148,31 @@ export default function BonusesPage() {
       </div>
 
       {active.length > 0 ? (
-        <div className="grid gap-3 sm:grid-cols-3">
+        <StatRow>
           <Stat
             label="Spend remaining"
-            value={formatDollars(outstanding)}
+            value={outstanding}
+            format={formatDollars}
             tone={outstanding > 0 ? 'accent' : 'ok'}
             hint={`across ${active.length} ${active.length === 1 ? 'bonus' : 'bonuses'}`}
           />
           <Stat
             label="Points at stake"
-            value={pending.points > 0 ? pending.points.toLocaleString('en-US') : '--'}
+            value={pending.points}
+            format={formatNumber}
+            display={pending.points > 0 ? undefined : '--'}
             tone="ok"
             hint="unlocked by finishing the spend above"
           />
           <Stat
             label="Cash at stake"
-            value={pending.cashCents > 0 ? formatDollars(pending.cashCents) : '--'}
+            value={pending.cashCents}
+            format={formatDollars}
+            display={pending.cashCents > 0 ? undefined : '--'}
             tone="ok"
             hint="from cash-back sign-up offers"
           />
-        </div>
+        </StatRow>
       ) : null}
 
       {active.length === 0 ? (

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { AttentionItem, Severity } from '@/lib/attention';
+import { Stagger, StaggerItem } from './motion';
 import { Badge, Button, Panel, PanelHeader } from './ui';
 
 const TONE: Record<Severity, 'danger' | 'warn' | 'neutral'> = {
@@ -24,7 +25,7 @@ const LABEL: Record<Severity, string> = {
 export function AttentionPanel({ items }: { items: AttentionItem[] }) {
   if (items.length === 0) {
     return (
-      <Panel className="border-ok/30 bg-ok/5">
+      <Panel className="ring-ok/25">
         <PanelHeader
           title="Everything is current"
           description="No fees inside their review window, no bonus behind pace, nothing waiting to be categorised, and every card has recent transactions."
@@ -36,7 +37,7 @@ export function AttentionPanel({ items }: { items: AttentionItem[] }) {
   const urgent = items.filter((i) => i.severity === 'now').length;
 
   return (
-    <Panel className={urgent > 0 ? 'border-danger/30 bg-danger/5' : ''}>
+    <Panel className={urgent > 0 ? 'ring-danger/25' : ''}>
       <PanelHeader
         title="Needs you"
         description="Everything the tracker cannot work out on its own, in the order it matters."
@@ -46,11 +47,12 @@ export function AttentionPanel({ items }: { items: AttentionItem[] }) {
           </Badge>
         }
       />
-      <ul className="divide-y divide-line border-t border-line">
+      <Stagger as="ul" className="divide-y divide-line border-t border-line" delay={0.1}>
         {items.map((item) => (
-          <li
+          <StaggerItem
+            as="li"
             key={item.id}
-            className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 py-3"
+            className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 py-3.5"
           >
             <span className="min-w-0 flex-1">
               <span className="flex flex-wrap items-center gap-2">
@@ -64,9 +66,9 @@ export function AttentionPanel({ items }: { items: AttentionItem[] }) {
             <Link href={item.href} className="shrink-0">
               <Button size="sm">{item.actionLabel}</Button>
             </Link>
-          </li>
+          </StaggerItem>
         ))}
-      </ul>
+      </Stagger>
     </Panel>
   );
 }

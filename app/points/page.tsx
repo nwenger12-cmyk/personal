@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from 'react';
 import { useData } from '@/components/DataProvider';
-import { Badge, Button, EmptyState, Field, Note, Panel, PanelHeader, Select, Stat, TextInput } from '@/components/ui';
+import { Badge, Button, EmptyState, Field, Note, Panel, PanelHeader, Select, Stat, StatRow, TextInput } from '@/components/ui';
 import { daysBetween, formatDate, today } from '@/lib/dates';
-import { centsToInput, formatCents, formatCpp, formatDollars, formatNumber, parseDollarsToCents, parseIntegerInput } from '@/lib/money';
+import { centsToInput, formatCents, formatCount, formatCpp, formatDollars, formatNumber, parseDollarsToCents, parseIntegerInput } from '@/lib/money';
 import { balanceViews, totalValueCents, untrackedPrograms } from '@/lib/points';
 import type { BalanceView } from '@/lib/points';
 import { PROGRAMS } from '@/lib/programs';
@@ -187,24 +187,28 @@ export default function PointsPage() {
       </div>
 
       {views.length > 0 ? (
-        <div className="grid gap-3 sm:grid-cols-3">
+        <StatRow>
           <Stat
             label="Total value"
-            value={formatDollars(total)}
+            value={total}
+            format={formatDollars}
             tone="ok"
             hint="at the best rate for each program"
           />
           <Stat
             label="Programs tracked"
-            value={String(views.length)}
+            value={views.length}
+            format={formatCount}
             hint={untracked.length > 0 ? `${untracked.length} more from cards you hold` : 'all covered'}
           />
           <Stat
             label="Largest balance"
-            value={views[0] ? formatDollars(views[0].bestValueCents) : '--'}
+            value={views[0]?.bestValueCents}
+            format={formatDollars}
+            display={views[0] ? undefined : '--'}
             hint={views[0]?.program.shortName}
           />
-        </div>
+        </StatRow>
       ) : null}
 
       <Note>

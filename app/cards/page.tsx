@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useData } from '@/components/DataProvider';
 import { CardEditor } from '@/components/CardEditor';
 import { CardList } from '@/components/CardList';
-import { Button, EmptyState, Panel, PanelHeader, Stat } from '@/components/ui';
+import { Button, EmptyState, Panel, PanelHeader, Stat, StatRow } from '@/components/ui';
 import { feeTotals } from '@/lib/fees';
 import { formatDollars } from '@/lib/money';
 import { sampleData } from '@/lib/sample';
@@ -91,10 +91,11 @@ function CardsPageInner() {
         />
       ) : (
         <>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <StatRow>
             <Stat
               label="Annual fees"
-              value={formatDollars(totals.annualFeeCents)}
+              value={totals.annualFeeCents}
+              format={formatDollars}
               hint={`across ${totals.cardCount} fee-carrying ${
                 totals.cardCount === 1 ? 'card' : 'cards'
               }`}
@@ -102,17 +103,19 @@ function CardsPageInner() {
             />
             <Stat
               label="Credits used"
-              value={formatDollars(totals.annualCreditsCents)}
+              value={totals.annualCreditsCents}
+              format={formatDollars}
               hint="what you say the perks are worth to you"
               tone="ok"
             />
             <Stat
               label="Net annual cost"
-              value={formatDollars(totals.netCents)}
+              value={totals.netCents}
+              format={formatDollars}
               hint="fees minus credits you actually use"
               tone={totals.netCents > 0 ? 'warn' : 'ok'}
             />
-          </div>
+          </StatRow>
 
           {closed.length > 0 ? (
             <label className="flex items-center gap-2 text-sm text-muted">

@@ -33,6 +33,12 @@ export function formatNumber(value: number): string {
   return PLAIN.format(Math.round(value));
 }
 
+/** A plain count. Separate from formatNumber so a counting stat never
+ *  shows a thousands separator mid-animation for a value that will not have one. */
+export function formatCount(value: number): string {
+  return String(Math.round(value));
+}
+
 /** "1.8c" -- the cents-per-point unit, written the way people say it. */
 export function formatCpp(centsPerPoint: number): string {
   const rounded = Math.round(centsPerPoint * 100) / 100;

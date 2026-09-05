@@ -121,7 +121,10 @@ export type LineTotal = {
 export type EntitySummary = {
   entity: Entity;
   lines: LineTotal[];
+  /** Categorised spend only -- what the line totals below add up to. */
   grossCents: number;
+  /** Everything filed to this entity, categorised or not. */
+  totalSpentCents: number;
   deductibleCents: number;
   count: number;
   /** Excluded from the line totals above, and reported so it is not silent. */
@@ -217,10 +220,13 @@ function summarizeEntity(entity: Entity, expenses: Expense[]): EntitySummary {
     line.categories.sort((a, b) => b.deductibleCents - a.deductibleCents);
   }
 
+  const grossCents = lines.reduce((sum, l) => sum + l.grossCents, 0);
+
   return {
     entity,
     lines,
-    grossCents: lines.reduce((sum, l) => sum + l.grossCents, 0),
+    grossCents,
+    totalSpentCents: grossCents + uncategorizedCents,
     deductibleCents: lines.reduce((sum, l) => sum + l.deductibleCents, 0),
     count: lines.reduce((sum, l) => sum + l.count, 0),
     uncategorizedCount,

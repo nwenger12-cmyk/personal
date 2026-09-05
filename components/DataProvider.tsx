@@ -261,13 +261,27 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const replaceAll = useCallback((next: AppData) => commit(next), [commit]);
   const resetAll = useCallback(() => commit(emptyData()), [commit]);
 
-  // The theme choice lives in the same store as everything else, and lands on
-  // <html> as an attribute. globals.css does the rest -- no component reads it.
+  /**
+   * The theme choice lives in the same store as everything else and lands on
+   * <html> as a concrete `light` or `dark`. "System" is resolved here rather
+   * than by a media query in CSS, so there is exactly one source of truth --
+   * globals.css only ever reads the attribute, and no component reads either.
+   */
   useEffect(() => {
     if (!ready) return;
     const root = document.documentElement;
-    if (data.settings.theme === 'system') root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', data.settings.theme);
+    const preference = data.settings.theme;
+
+    if (preference !== 'system') {
+      root.setAttribute('data-theme', preference);
+      return;
+    }
+
+    const query = window.matchMedia('(prefers-color-scheme: light)');
+    const apply = () => root.setAttribute('data-theme', query.matches ? 'light' : 'dark');
+    apply();
+    query.addEventListener('change', apply);
+    return () => query.removeEventListener('change', apply);
   }, [data.settings.theme, ready]);
 
   const value = useMemo(
