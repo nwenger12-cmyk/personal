@@ -1,3 +1,4 @@
+import type { Wager } from './betting';
 import type { IsoDate } from './dates';
 
 export type Issuer =
@@ -285,6 +286,12 @@ export type Settings = {
   mileageRateCents: number;
   /** Warn this many days before a recurring credit's period closes. */
   perkWarnDays: number;
+  /**
+   * The W-2G winnings threshold for a sports wager, in cents. $600 through
+   * 2025, $2,000 from 2026 under the 2025 tax law -- confirm it against the
+   * current IRS W-2G instructions.
+   */
+  w2gThresholdCents: number;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -297,6 +304,7 @@ export const DEFAULT_SETTINGS: Settings = {
   defaultEntityId: null,
   mileageRateCents: 70,
   perkWarnDays: 10,
+  w2gThresholdCents: 200_000,
 };
 
 export type AppData = {
@@ -312,6 +320,8 @@ export type AppData = {
   entities: Entity[];
   expenses: Expense[];
   mileage: MileageTrip[];
+  /** Every sportsbook bet, both legs of every hedge. */
+  wagers: Wager[];
   categorizationRules: CategorizationRule[];
   settings: Settings;
   updatedAt: string;
@@ -340,6 +350,7 @@ export function emptyData(): AppData {
     entities,
     expenses: [],
     mileage: [],
+    wagers: [],
     categorizationRules: [],
     settings: { ...DEFAULT_SETTINGS, defaultEntityId: entities[0].id },
     updatedAt: new Date().toISOString(),

@@ -22,6 +22,7 @@ import type {
   Settings,
 } from '@/lib/types';
 import { loadData, saveData } from '@/lib/storage';
+import type { Wager } from '@/lib/betting';
 
 type DataContextValue = {
   data: AppData;
@@ -45,6 +46,9 @@ type DataContextValue = {
   removeRule: (ruleId: string) => void;
   addTrip: (trip: MileageTrip) => void;
   removeTrip: (tripId: string) => void;
+  /** Add or replace wagers by id -- both legs of a hedge land in one write. */
+  upsertWagers: (wagers: Wager[]) => void;
+  removeWagers: (wagerIds: string[]) => void;
   updateSettings: (patch: Partial<Settings>) => void;
   replaceAll: (data: AppData) => void;
   resetAll: () => void;
@@ -276,6 +280,27 @@ export function DataProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const upsertWagers = useCallback((incoming: Wager[]) => {
+    setData((current) => {
+      const byId = new Map(incoming.map((w) => [w.id, w]));
+      const kept = current.wagers.map((w) => byId.get(w.id) ?? w);
+      const known = new Set(current.wagers.map((w) => w.id));
+      const added = incoming.filter((w) => !known.has(w.id));
+      const next = { ...current, wagers: [...kept, ...added] };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
+  const removeWagers = useCallback((wagerIds: string[]) => {
+    const drop = new Set(wagerIds);
+    setData((current) => {
+      const next = { ...current, wagers: current.wagers.filter((w) => !drop.has(w.id)) };
+      setPersistFailed(!saveData(next));
+      return next;
+    });
+  }, []);
+
   const updateSettings = useCallback((patch: Partial<Settings>) => {
     setData((current) => {
       const next = { ...current, settings: { ...current.settings, ...patch } };
@@ -330,6 +355,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       removeRule,
       addTrip,
       removeTrip,
+      upsertWagers,
+      removeWagers,
       updateSettings,
       replaceAll,
       resetAll,
@@ -338,7 +365,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       data, ready, persistFailed, upsertCard, removeCard, setBalance,
       removeBalance, setValuation, upsertExpense, upsertExpenses, removeExpense,
       removeExpenses, upsertEntity, removeEntity, addRule, removeRule,
-      addTrip, removeTrip, updateSettings, replaceAll, resetAll,
+      addTrip, removeTrip, upsertWagers, removeWagers, updateSettings, replaceAll, resetAll,
     ],
   );
 

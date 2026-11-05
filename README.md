@@ -66,6 +66,29 @@ before each one, bonus deadlines, unused credits, and eligibility clocks — eac
 as an all-day event with a one-day alarm. It is a snapshot, not a subscription,
 so re-import after anything that moves a date.
 
+## Sportsbook promos
+
+**Betting** converts sportsbook sign-up offers and bonus bets into cash by
+betting both sides at two books. Virginia has no betting exchange, so the
+"lay" is a back bet on the opposite outcome at a second book.
+
+- **Hedge calculator**, three modes. *Qualifying* (cash on both sides, for
+  unlocking an offer). *Bonus bet* (the stake does not come back, which is
+  how Fanatics FanCash and most bonus bets work). *No-sweat* (a cash bet
+  refunded as a bonus bet if it loses, like BetMGM's tokens; the refund is
+  valued at your conversion rate). It gives the hedge stake, both outcomes,
+  the locked-in figure, the two books' combined margin, and an option to
+  round to whole dollars.
+- **W-2G check** on both legs. A sports wager is reported only if winnings
+  meet the threshold *and* are 300x the stake. The threshold is a setting,
+  defaulting to $2,000 from 2026. Promo hedging never comes near 300x.
+- **Bet log.** "Log both legs" saves the pair. One tap settles both (one side
+  won, so the other lost). Totals by book and by tax year follow.
+- **Tax gap.** Every hedge has a winning leg and a losing leg, so gross
+  winnings run well ahead of profit. On the standard deduction the losses
+  are not deductible at all. Itemising, only 90% of losses come off from
+  2026. The page shows both taxable figures so you set aside enough.
+
 ## The interface
 
 Dark by default, one accent, and structure carried by space and hairlines

@@ -1,6 +1,8 @@
 import { isIsoDate, today } from './dates';
 import type { IsoDate } from './dates';
 import { getCatalogCard } from './catalog';
+import { isValidAmerican } from './betting';
+import type { StakeKind, Wager, WagerResult } from './betting';
 import type { CatalogCard } from './catalog';
 import { UNCATEGORIZED_ID, getCategory } from './categories';
 import {
@@ -201,6 +203,35 @@ function coerceMileage(value: unknown, entities: Entity[]): MileageTrip[] {
   });
 }
 
+const WAGER_RESULTS: WagerResult[] = ['pending', 'won', 'lost', 'push', 'void'];
+
+function coerceWagers(value: unknown): Wager[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry): Wager[] => {
+    if (!entry || typeof entry !== 'object') return [];
+    const w = entry as Record<string, unknown>;
+    const when = nullableDate(w.date);
+    const odds = num(w.americanOdds);
+    // A bet with no date or impossible odds cannot be settled or totalled.
+    if (!when || !isValidAmerican(odds)) return [];
+    return [{
+      id: str(w.id) || newId(),
+      date: when,
+      book: str(w.book),
+      selection: str(w.selection),
+      americanOdds: Math.round(odds),
+      stakeCents: Math.max(0, Math.round(num(w.stakeCents))),
+      stakeKind: (w.stakeKind === 'bonus' ? 'bonus' : 'cash') as StakeKind,
+      result: WAGER_RESULTS.includes(w.result as WagerResult)
+        ? (w.result as WagerResult)
+        : 'pending',
+      promo: str(w.promo),
+      group: typeof w.group === 'string' && w.group ? w.group : null,
+      notes: str(w.notes),
+    }];
+  });
+}
+
 function coerceCard(value: unknown): CardAccount | null {
   if (!value || typeof value !== 'object') return null;
   const c = value as Record<string, unknown>;
@@ -383,6 +414,10 @@ function coerceSettings(value: unknown, entities: Entity[]): Settings {
       120,
       Math.max(0, Math.round(num(s.perkWarnDays, DEFAULT_SETTINGS.perkWarnDays))),
     ),
+    w2gThresholdCents: Math.max(
+      0,
+      Math.round(num(s.w2gThresholdCents, DEFAULT_SETTINGS.w2gThresholdCents)),
+    ),
   };
 }
 
@@ -417,6 +452,7 @@ export function coerceData(value: unknown): AppData {
     entities,
     expenses: coerceExpenses(d.expenses, entities),
     mileage: coerceMileage(d.mileage, entities),
+    wagers: coerceWagers(d.wagers),
     categorizationRules: coerceRules(d.categorizationRules),
     settings: coerceSettings(d.settings, entities),
     updatedAt: str(d.updatedAt, new Date().toISOString()),

@@ -271,6 +271,7 @@ export function sampleData(now: IsoDate = today()): AppData {
         entityId: locusstock.id,
       },
     ],
+    wagers: [],
     categorizationRules: [],
     balances: [
       { programId: 'chase-ur', amount: 187_400, updated: now, lastActivity: monthsAgo(1, now) },
