@@ -49,7 +49,7 @@ Never plan one promo in isolation. Each day, list every live promo, its expiry a
 | DraftKings | 6 × $25 bonus (Nov 12, 19, 26), $5 Discord bonus, **Bet & Get $25 (place $25 at −250 or longer by Sat ~11:09am)** | 7 days each | about $140 |
 | Caesars | 7 × 100% boosts ($25 max) | 11/19 2:17am | about $100 |
 | bet365 | $114 bonus bets | about 7 days from issue (check) | about $90 |
-| Betr | 3 × $50 No Sweat entries (1 now, 2 on Nov 12) | check | about $60 |
+| Betr | 3 × $50 No Sweat tokens: **token 2 available now**; tokens 3–4 credited 7 days after token 1 was used (about Nov 12). Loss refunds $50 in Betr Bucks (1x playthrough). Needs a $50 cash entry (Betr cash $0, so deposit). Best use: a **3-pick at about 5–6x with legs priced −140 or stronger at sportsbooks**, about +$25–35 EV | No expiry shown; check T&C | about $75 |
 | Underdog | 4 × $10 bonus entries | 24h each | about $30 |
 | Bally | Pending ULM +510 (Sat 3pm): win → 5 × $100 bonus | 28 days | in pending |
 | theScore | Refund 5 × $17.60 if Grizzlies lose tonight | 30 days | in pending |
