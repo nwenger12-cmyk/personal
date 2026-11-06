@@ -39,6 +39,8 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
 | Caesars | $0.38 (+$50 open) | **7 × 100% Profit Boosts**, $25 max each, expire 11/19 2:17am; pay in cash | 3 used |
 | theScore Bet | $2 (+$88 open) | $1,000 First Bet Reset in play: $88 on Grizzlies +145. If it loses, the refund comes as 5 bonus bets of 20% each (30-day expiry) | |
 | Betr Picks | $0 (+$50 entry) | **3 more $50 No Sweat entries** (1 now, 2 dropping Nov 12); Betr Bucks have 1x playthrough | Check Virginia eligibility |
+| Bally Bet | $0 (+$10 open) | Welcome: first cash bet $10+ at −200 or longer. If it **wins**, bonus tokens by odds (≥ +500 → 5 × $100; +400–499 → 4 × $100; lower tiers smaller). If it loses → two 30% profit boosts. **Placed:** Louisiana-Monroe ML **+510**, $10 (ULM @ Arkansas State, Sat Nov 7, 3:00pm). Wins → $51 cash + $500 bonus. | Don't stack tokens on the qualifier; it's done |
+| Underdog (UDX) | $12.77 pending | Play $10, Get $50: $10 bonus entry per day for 5 days, **each expires 24h after it's granted**. Bonus entries pay winnings only (stake not returned). **Placed:** $10 cash Celtics to win 1.28x (vs Hornets, Fri 7pm); bonus entry #1 on Wizards to win (pays $25.22; Fri 7pm). | Use daily bonus entries on 3x–6x underdogs, never opposite a cash pick in the same game |
 
 **BetRivers and Sporttrade are out (Sporttrade is out of business). Never suggest either.** Don't push new apps unless the user asks. If they do: Kalshi (code `MAX60`), Novig (code `COVERS`), Bally Bet, or retrying FanDuel via Venmo/PayPal. Skip PrizePicks. Virginia has no legal online casino.
 
