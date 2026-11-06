@@ -92,14 +92,14 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
 | Hard Rock | $95.83 |
 | theScore Bet | $90.00 |
 | Caesars | $51.00 |
-| Betr | $50.00 |
+| Betr | $100.00 |
 | Fanatics | $20.00 |
 | bet365 | $10.00 |
 | Bally Bet | $10.00 |
 | Underdog | $10.00 |
-| **Total** | **$741.83** |
+| **Total** | **$791.83** |
 
-- Less the $100 EDGE Boost instant cash match: **real money in about $641.83**. (Gemini's earlier $631.83 total missed theScore's $90.)
+- Less the $100 EDGE Boost instant cash match: **real money in about $691.83**. (Gemini's earlier $631.83 total missed theScore's $90.)
 - Realized profit to date: +$158.06 (includes the $100 EDGE match). Friday open bets: about +$133 to +$265.
 - Estimated campaign profit at max EV: **about $1,250–1,500**, so **about $1,900–2,150 total back**.
 - Underdog charges a small exchange fee (about 1.6%: $0.16 on a $10 entry).
@@ -135,6 +135,7 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
 - **Underdog:** $10 cash Celtics to win (pays $12.77); $10 bonus entry Wizards to win (pays $25.22). Both 7pm.
 - **Hard Rock:** $5 NFL No Sweat 3-leg parlay: Giants −170, Broncos −145, Bengals −170 (+326, pays $21.31; refund up to $5 bonus if it loses). Sun Nov 8.
 - **Bally:** $10 Louisiana-Monroe ML +510 (Sat 3pm), the welcome qualifier.
+- **Betr:** token #2 used: 3-pick Perfect **5.4x**, $50 with **$50 No Sweat applied** (pays $270). Brown U6.5 reb (7:30pm), SGA U32.5 pts (8pm), Dončić U35.5 pts (10pm). Lose → $50 Betr Bucks. Betr deposit +$50 (total deposits now **$791.83**, real money **$691.83**).
 - **To do tonight:** DraftKings Bet & Get, $25 at about −110 on the 76ers/Cavs total, placed 6:30–7:25pm (deadline about Sat 10:25am). Deposit $21 to DraftKings first if Boston College lost.
 
 ## Next steps
