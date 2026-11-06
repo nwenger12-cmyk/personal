@@ -40,7 +40,7 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
 | theScore Bet | $2 (+$88 open) | $1,000 First Bet Reset in play: $88 on Grizzlies +145. If it loses, the refund comes as 5 bonus bets of 20% each (30-day expiry) | |
 | Betr Picks | $0 (+$50 entry) | **3 more $50 No Sweat entries** (1 now, 2 dropping Nov 12); Betr Bucks have 1x playthrough | Check Virginia eligibility |
 
-**BetRivers is out. Never suggest it.** Next app to add: **Sporttrade** (VA betting exchange; get offer terms before any first bet, and use it as the hedge side for better prices). Other options if the user asks: Kalshi (code `MAX60`), Novig (code `COVERS`), Bally Bet, and retrying FanDuel via Venmo/PayPal. Skip PrizePicks. Virginia has no legal online casino.
+**BetRivers and Sporttrade are out (Sporttrade is out of business). Never suggest either.** Don't push new apps unless the user asks. If they do: Kalshi (code `MAX60`), Novig (code `COVERS`), Bally Bet, or retrying FanDuel via Venmo/PayPal. Skip PrizePicks. Virginia has no legal online casino.
 
 ## Friday's open bets (all math verified)
 1. **UMass @ Boston College, 4:00pm.** Fanatics UMass +200, $50 FanCash (pays $100). DraftKings BC −245, $71 cash (pays $99.97). **+$29 either way.**
