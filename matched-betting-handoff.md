@@ -130,6 +130,13 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
    - **Correction:** Gemini's "+$57 either way" was overstated. Assuming a 3x payout ($150), the hedge that evens it out is **about $60 on Burrow Under** at −110, locking in **about +$40** (Over: 150 − 50 − 60 = +$40; Under: 54.6 − 50 + 35 refund value = +$40). After the $30 lost Curry hedge, the entry nets about +$10.
    - **Under max EV:** don't hedge unless the no-vig price makes Burrow Over clearly worse than 33% (a 3x payout needs about 33% to break even before the refund). Confirm the actual payout multiplier from the Betr screenshot first.
 
+## Other open bets placed Fri Nov 6
+- **Fanatics:** Hornets ML **+325**, **$55.11 FanCash** (all FanCash used; pays **$179.11**, stake not returned). Celtics @ Hornets, 7:10pm.
+- **Underdog:** $10 cash Celtics to win (pays $12.77); $10 bonus entry Wizards to win (pays $25.22). Both 7pm.
+- **Hard Rock:** $5 NFL No Sweat 3-leg parlay: Giants −170, Broncos −145, Bengals −170 (+326, pays $21.31; refund up to $5 bonus if it loses). Sun Nov 8.
+- **Bally:** $10 Louisiana-Monroe ML +510 (Sat 3pm), the welcome qualifier.
+- **To do tonight:** DraftKings Bet & Get, $25 at about −110 on the 76ers/Cavs total, placed 6:30–7:25pm (deadline about Sat 10:25am). Deposit $21 to DraftKings first if Boston College lost.
+
 ## Next steps
 1. **Friday night, after about 10:30pm:** tally results. Claim refunds: Hard Rock $50 if the Raptors win, theScore $88 (as 5 × $17.60) if the Thunder win, BetMGM $100 if the Grizzlies win. Check balances at DraftKings and BetMGM.
 2. **Saturday, Nov 7 (max EV):**
