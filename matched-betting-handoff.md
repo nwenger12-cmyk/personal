@@ -25,7 +25,7 @@ How to update:
 - **Cushion check:** open unhedged cash-bet worst case must stay ≤ banked profit.
 
 ## Open questions / ledger checks (resolve from the user's screenshots)
-- **Hard Rock:** snapshot says $0 cash, but expected about **$68.18**. Thursday's Warriors −275 $50 no-sweat **won** (user confirmed) after the $40.83 deposit brought the balance to $50, which was used on the Bucks $50.
+- **Hard Rock: resolved.** Cash is **$68.18** (screenshot, Fri 3:16pm). Extra reward found: **"Choose Your Offer" (boost or No Sweat), expires 11/08 11:59pm**. Get its terms before choosing. The day 3 No Sweat unlocks at midnight.
 - **DraftKings:** snapshot says "$186+ open," but the known Friday cash bets total $227.32 (BC $71, Mavs $81, Raptors $75.32).
 - **Caesars:** snapshot says "$50 open," but only one known open bet (76ers −155, $25 boosted).
 - Confirmed by the user: Heat @ Warriors Thursday → **Warriors won**. Betr works in VA; the 2-pick **pays 3x**. Bally welcome offer **shows active**. User **declined** calendar reminders: remind in chat instead.
