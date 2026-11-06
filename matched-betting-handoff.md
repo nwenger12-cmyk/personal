@@ -22,11 +22,25 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
 - **Still never:** parlays or long shots beyond about +600 (that keeps W-2G's 300x test far away), Cash Out, or both sides of a market at one book.
 - Hedging is still allowed when it locks in almost as much as the unhedged EV, or when cash is too thin to absorb a loss.
 
-## Money summary
-- Gross deposited: **$631.83**. Less a $100 EDGE Boost instant cash match, **net out of pocket $531.83**.
-- Realized profit to date: **+$158.06** (+$58.06 from Thursday's games plus the $100 EDGE match).
-- Friday's open bets: **about +$133 to +$265** (recomputed; see below).
-- Projected campaign profit: about +$1,200 to +$1,400 at max EV (Gemini's estimate; actual results will vary).
+## Money summary (deposit histories confirmed Nov 6)
+| App | Deposited |
+|---|---|
+| DraftKings | $205.00 |
+| BetMGM | $200.00 |
+| Hard Rock | $95.83 |
+| theScore Bet | $90.00 |
+| Caesars | $51.00 |
+| Betr | $50.00 |
+| Fanatics | $20.00 |
+| bet365 | $10.00 |
+| Bally Bet | $10.00 |
+| Underdog | $10.00 |
+| **Total** | **$741.83** |
+
+- Less the $100 EDGE Boost instant cash match: **real money in about $641.83**. (Gemini's earlier $631.83 total missed theScore's $90.)
+- Realized profit to date: +$158.06 (includes the $100 EDGE match). Friday open bets: about +$133 to +$265.
+- Estimated campaign profit at max EV: **about $1,250–1,500**, so **about $1,900–2,150 total back**.
+- Underdog charges a small exchange fee (about 1.6%: $0.16 on a $10 entry).
 
 ## Book inventory
 | App | Cash | Promos left | Notes |
