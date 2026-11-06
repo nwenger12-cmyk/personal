@@ -4,7 +4,11 @@ Snapshot as of **Fri Nov 6, 2026, about 1:30pm ET**. You are taking over coachin
 
 ## The user
 - 21, lives in Virginia. Accounts are open and verified at the books below.
-- **Strategy: Max EV** (confirmed by the user on Nov 6). They accept losing days in exchange for more profit on average. This replaces the earlier "always guaranteed" approach. Details below.
+- **Strategy: max profit, but never a loss overall** (user's words, Nov 6). Run it with the **cushion rule**:
+  - **Free bets / FanCash / refunds can't lose cash**, so always play them **unhedged on +300 to +600** for max EV.
+  - Cash-stake promos (no-sweat tokens, Caesars boosts) go **unhedged only while the total worst-case loss on open unhedged cash bets is no more than the profit already banked**. Worst case: an unhedged $100 no-sweat ≈ −$35 (refund worth about $65); a $25 boost = −$25. Otherwise hedge them.
+  - Recompute the cushion every day from banked profit.
+- Has **more than $500** extra cash available to keep every app funded. That's a buffer, not money to risk.
 - Wants things explained simply: exact bets in a table (App | Event | Market | Stake & promo | Payout), short steps, pop-up style questions. Sends screenshots of offers, odds and receipts.
 - Funding: debit cards get flagged. **Venmo, PayPal, an EDGE Boost Visa debit card, and Instant Bank Transfer / Trustly** all work.
 
@@ -36,7 +40,7 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
 | theScore Bet | $2 (+$88 open) | $1,000 First Bet Reset in play: $88 on Grizzlies +145. If it loses, the refund comes as 5 bonus bets of 20% each (30-day expiry) | |
 | Betr Picks | $0 (+$50 entry) | **3 more $50 No Sweat entries** (1 now, 2 dropping Nov 12); Betr Bucks have 1x playthrough | Check Virginia eligibility |
 
-**Not signed up yet:** BetRivers (2nd Chance up to $500, code `SPORTS`; an earlier $90 Instant Bank Transfer deposit showed pending, so check whether it cleared), Kalshi (deposit $10, trade $25, get $60, code `MAX60`), Novig (deposit $10, get $50, code `COVERS`), Bally Bet, Sporttrade (a VA exchange), and FanDuel (failed before; retry with Trustly). Skip PrizePicks. Virginia has no legal online casino.
+**BetRivers is out. Never suggest it.** Next app to add: **Sporttrade** (VA betting exchange; get offer terms before any first bet, and use it as the hedge side for better prices). Other options if the user asks: Kalshi (code `MAX60`), Novig (code `COVERS`), Bally Bet, and retrying FanDuel via Venmo/PayPal. Skip PrizePicks. Virginia has no legal online casino.
 
 ## Friday's open bets (all math verified)
 1. **UMass @ Boston College, 4:00pm.** Fanatics UMass +200, $50 FanCash (pays $100). DraftKings BC −245, $71 cash (pays $99.97). **+$29 either way.**
