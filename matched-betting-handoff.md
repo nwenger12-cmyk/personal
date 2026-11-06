@@ -24,6 +24,13 @@ How to update:
 - **Pace = banked − EV of settled.** Above 0 means running ahead (lucky), below 0 behind (unlucky). Within about ±$100 is normal variance. If it's below −$150, say so and check the cushion rule.
 - **Cushion check:** open unhedged cash-bet worst case must stay ≤ banked profit.
 
+## Open questions / ledger checks (resolve from the user's screenshots)
+- **Hard Rock:** snapshot says $0 cash, but expected about **$68.18**. Thursday's Warriors −275 $50 no-sweat **won** (user confirmed) after the $40.83 deposit brought the balance to $50, which was used on the Bucks $50.
+- **DraftKings:** snapshot says "$186+ open," but the known Friday cash bets total $227.32 (BC $71, Mavs $81, Raptors $75.32).
+- **Caesars:** snapshot says "$50 open," but only one known open bet (76ers −155, $25 boosted).
+- Confirmed by the user: Heat @ Warriors Thursday → **Warriors won**. Betr works in VA; the 2-pick **pays 3x**. Bally welcome offer **shows active**. User **declined** calendar reminders: remind in chat instead.
+- **Rule:** ask the user to clarify anything that doesn't reconcile; never guess balances.
+
 ## The user
 - 21, lives in Virginia. Accounts are open and verified at the books below.
 - **Strategy: max profit, but never a loss overall** (user's words, Nov 6). Run it with the **cushion rule**:
