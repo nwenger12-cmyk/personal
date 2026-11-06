@@ -24,6 +24,36 @@ How to update:
 - **Pace = banked − EV of settled.** Above 0 means running ahead (lucky), below 0 behind (unlucky). Within about ±$100 is normal variance. If it's below −$150, say so and check the cushion rule.
 - **Cushion check:** open unhedged cash-bet worst case must stay ≤ banked profit.
 
+## MASTER PLAN: optimize across ALL apps at once (user's instruction)
+Never plan one promo in isolation. Each day, list every live promo, its expiry and its app's cash, then assign them together.
+
+**Allocation rules**
+1. **Free bets / FanCash / bonus entries / refunds:** long underdogs +300 to +600, unhedged (can't lose cash).
+2. **No-sweat tokens (BetMGM $100, Hard Rock $50):** +200 to +350 underdogs, unhedged while the cushion allows.
+3. **Caesars 100% boosts:** +150 to +250 underdogs, about one per day.
+4. **Required cash wagers** (DraftKings Bet & Get $25, any qualifiers): place them **on the opposite side of a promo bet** (e.g., opposite a Caesars boost or no-sweat) so the cash wager also hedges, instead of a standalone bet.
+5. **Diversify:** put each day's unhedged promos on **different games and teams**. Never stack several on the same underdog.
+6. **Spend the shortest expiry first:** Fanatics/Underdog (24h) → Hard Rock (11:59pm) → BetMGM (24h from login) → bet365/DraftKings bonuses (7 days) → Caesars (11/19) → theScore refund (30 days).
+7. **Cushion:** sum the worst case of open unhedged cash bets (BetMGM no-sweat ≈ −$30, Hard Rock ≈ −$15, Caesars boost = −$25) and keep it ≤ banked profit. If pace drops below −$150, hedge cash promos.
+8. **Cash routing:** each morning, check which apps need cash for that day's tokens (BetMGM $100, Hard Rock $50, Caesars $25/boost) and deposit only the shortfall. Withdraw from apps whose promos are finished.
+
+**Inventory and expected value (as of Fri Nov 6, 3:30pm)**
+| App | Promos left | Expires | Est. EV left |
+|---|---|---|---|
+| BetMGM | 8 × $100 No Sweat (daily on login) | 24h each | about $360 |
+| Fanatics | 5 × $50 FanCash (opt in daily) | 24h each | about $200 |
+| Hard Rock | 8 × $50 No Sweat | 11:59pm daily | about $175 |
+| DraftKings | 6 × $25 bonus (Nov 12, 19, 26), $5 Discord bonus, **Bet & Get $25 (place $25 at −250 or longer by Sat ~11:09am)** | 7 days each | about $140 |
+| Caesars | 7 × 100% boosts ($25 max) | 11/19 2:17am | about $100 |
+| bet365 | $114 bonus bets | about 7 days from issue (check) | about $90 |
+| Betr | 3 × $50 No Sweat entries (1 now, 2 on Nov 12) | check | about $60 |
+| Underdog | 4 × $10 bonus entries | 24h each | about $30 |
+| Bally | Pending ULM +510 (Sat 3pm): win → 5 × $100 bonus | 28 days | in pending |
+| theScore | Refund 5 × $17.60 if Grizzlies lose tonight | 30 days | in pending |
+| **Total** | | | **about $1,150** |
+
+Projected finish when fully optimized: **about $1,350–1,600 profit**.
+
 ## Open questions / ledger checks (resolve from the user's screenshots)
 - **Hard Rock: resolved.** Cash is **$68.18** (screenshot, Fri 3:16pm). Extra reward found: **"Choose Your Offer" (boost or No Sweat), expires 11/08 11:59pm**. Get its terms before choosing. The day 3 No Sweat unlocks at midnight.
 - **DraftKings:** snapshot says "$186+ open," but the known Friday cash bets total $227.32 (BC $71, Mavs $81, Raptors $75.32).
