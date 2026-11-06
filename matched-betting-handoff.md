@@ -2,6 +2,28 @@
 
 Snapshot as of **Fri Nov 6, 2026, about 1:30pm ET**. You are taking over coaching a user through sportsbook promos in Virginia. Read all of this before answering.
 
+## SCOREBOARD (show this at the end of EVERY reply, updated)
+User's request: keep total cash in readily available and always check results against EV, so they know they're pacing at a profit.
+
+| Line | Value | Updated |
+|---|---|---|
+| Deposited (all apps) | **$741.83** | Nov 6 |
+| Less EDGE $100 match | -$100.00 | Nov 6 |
+| **Real money in** | **$641.83** | Nov 6 |
+| Banked profit (settled) | **+$158.06** | Thu Nov 5 night |
+| EV of settled promos | about +$160 (Thu hedges about $60 + EDGE $100) | Thu Nov 5 night |
+| **Pace (banked − EV)** | **about −$2: on pace** | Thu Nov 5 night |
+| Pending (open bets' EV) | about +$262 (Friday hedges about $200, Bally about $55, Underdog about $7) | Fri Nov 6 |
+| Promos left (remaining EV) | about $1,000 | Fri Nov 6 |
+| Projected finish | about $1,250–1,500 profit, about $1,900–2,150 back | Fri Nov 6 |
+
+How to update:
+- **Deposited:** add every new deposit the moment it's made.
+- **Banked profit:** sum of the net results of settled bets (cash; refunds counted only once converted).
+- **EV of settled promos:** the expected value each promo had when placed (hedged = locked amount; unhedged = EV estimate). Add it when the bet settles.
+- **Pace = banked − EV of settled.** Above 0 means running ahead (lucky), below 0 behind (unlucky). Within about ±$100 is normal variance. If it's below −$150, say so and check the cushion rule.
+- **Cushion check:** open unhedged cash-bet worst case must stay ≤ banked profit.
+
 ## The user
 - 21, lives in Virginia. Accounts are open and verified at the books below.
 - **Strategy: max profit, but never a loss overall** (user's words, Nov 6). Run it with the **cushion rule**:
