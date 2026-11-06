@@ -136,7 +136,7 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
 - **Hard Rock:** $5 NFL No Sweat 3-leg parlay: Giants −170, Broncos −145, Bengals −170 (+326, pays $21.31; refund up to $5 bonus if it loses). Sun Nov 8.
 - **Bally:** $10 Louisiana-Monroe ML +510 (Sat 3pm), the welcome qualifier.
 - **Betr:** token #2 used: 3-pick Perfect **5.4x**, $50 with **$50 No Sweat applied** (pays $270). Brown U6.5 reb (7:30pm), SGA U32.5 pts (8pm), Dončić U35.5 pts (10pm). Lose → $50 Betr Bucks. Betr deposit +$50 (total deposits now **$791.83**, real money **$691.83**).
-- **To do tonight:** DraftKings Bet & Get, $25 at about −110 on the 76ers/Cavs total, placed 6:30–7:25pm (deadline about Sat 10:25am). Deposit $21 to DraftKings first if Boston College lost.
+- **DraftKings (Fri ~6:10pm):** Bet & Get completed (BC $71 settled); its $25 reward bonus was used on **76ers/Cavs Under 231.5 −108** (pays $23.14). Two $25 Refer-a-Friend bonuses used: **UNC Greensboro ML +330** @ Elon (CBB, Fri 7pm, pays $82.50) and **Arkansas ML +310** @ Auburn (Sat 12:45pm, pays $77.50). DraftKings cash $104.13.
 
 ## Next steps
 1. **Friday night, after about 10:30pm:** tally results. Claim refunds: Hard Rock $50 if the Raptors win, theScore $88 (as 5 × $17.60) if the Thunder win, BetMGM $100 if the Grizzlies win. Check balances at DraftKings and BetMGM.
