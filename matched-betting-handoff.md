@@ -1,75 +1,60 @@
-# Handoff: Matched Betting Plan (Virginia)
+# Handoff: Sportsbook Promo Campaign (Virginia)
 
-You are taking over coaching a user through sportsbook promo hedging ("matched betting") in Virginia. Read all of this before answering.
+Snapshot as of **Fri Nov 6, 2026, about 1:30pm ET**. You are taking over coaching a user through sportsbook promos in Virginia. Read all of this before answering.
 
 ## The user
-- 21, lives in Virginia. Has accounts open and verified at the books below.
-- Wants **guaranteed profit only**: every bet hedged so the result is the same whichever team wins. No gambling on outcomes.
-- Wants things explained **simply**, step by step, with exact bets in a table (app / team / amount). Likes pop-up style questions. Sends screenshots of offers, odds, and receipts.
-- Will check the apps every day.
-- Has about **$254 more** to deposit. Card deposits keep getting declined (bank fraud flags). **Instant Bank Transfer / Online Banking (Trustly) works.** Use that.
+- 21, lives in Virginia. Accounts are open and verified at the books below.
+- **Strategy: Max EV** (confirmed by the user on Nov 6). They accept losing days in exchange for more profit on average. This replaces the earlier "always guaranteed" approach. Details below.
+- Wants things explained simply: exact bets in a table (App | Event | Market | Stake & promo | Payout), short steps, pop-up style questions. Sends screenshots of offers, odds and receipts.
+- Funding: debit cards get flagged. **Venmo, PayPal, an EDGE Boost Visa debit card, and Instant Bank Transfer / Trustly** all work.
 
-## The method
-Bet one team at one app and the other team at a different app, sized so both outcomes give the same profit. The profit comes from the promos. Never bet both sides at the same app.
+## Max-EV rules (use these numbers)
+Let B be the decimal odds and p the true win probability (vig removed, using the best market price).
+- **Bonus bets / FanCash** (stake not returned): EV is about S·(B−1)·p, which rises with longer odds. At +300 to +600 it's about 75–85% of face value unhedged, versus about 65% hedged. **Bet unhedged on +300 to +600** at the book with the best price.
+- **No-sweat / second-chance tokens**: EV is about S·[(B·p − 1) + 0.7·(1−p)], where the second term is the refund (worth about 70%) times the chance of losing. **Bet on +200 to +400 underdogs unhedged.** A $100 token at +300 is about +$48 EV, versus about +$35 hedged.
+- **100% profit boosts** (Caesars, $25 max): boosted decimal B' = 1 + 2·(B−1), and EV is about S·(B'·p − 1). **Bet on +150 to +250 underdogs unhedged.** About +$14–16 EV per boost, versus about +$11 hedged.
+- **Shop the line.** Always take the best price across apps, and use the no-vig price to estimate p. A bad price can wipe out the edge.
+- **Variance and cash:** expect many losing days. Keep enough cash spread across apps to keep playing every daily token. Don't let a hot or cold streak change stake sizes beyond the promo caps.
+- **Still never:** parlays or long shots beyond about +600 (that keeps W-2G's 300x test far away), Cash Out, or both sides of a market at one book.
+- Hedging is still allowed when it locks in almost as much as the unhedged EV, or when cash is too thin to absorb a loss.
 
-Formulas (S = promo stake, B = decimal odds on the promo side, H = decimal odds on the hedge side, x = hedge stake):
-- **Qualifying (cash both sides):** x = S·B / H. Small loss, about 4–5%.
-- **Bonus bet (stake not returned):** x = S·(B−1) / H. Best at +250 to +400 on the bonus side. Converts at about 60–67%.
-- **No-sweat (losing stake refunded as a bonus bet R, valued at c = 0.70):** x = (S·B − c·R) / H. Put it on the underdog (+100 to +200).
-- **Profit boost (100%):** boosted decimal B' = 1 + 2·(B−1), then use the qualifying formula. Best at +150 to +250. About $11–12 per $25 boost.
-- **Two no-sweats on opposite sides** of a near-even game (e.g. +100 / −120): solve so both outcomes are equal, counting each side's refund at 70%. Uses little cash and locks in a lot. Example: $87 at +100 with a 2nd-chance token vs $100 at −120 with a BetMGM token is about $57 locked.
-- Bonus vs bonus (no cash): free bets on opposite sides at about +105 / +105 return about 50% of the bonus total.
+## Money summary
+- Gross deposited: **$631.83**. Less a $100 EDGE Boost instant cash match, **net out of pocket $531.83**.
+- Realized profit to date: **+$158.06** (+$58.06 from Thursday's games plus the $100 EDGE match).
+- Friday's open bets: **about +$133 to +$265** (recomputed; see below).
+- Projected campaign profit: about +$1,200 to +$1,400 at max EV (Gemini's estimate; actual results will vary).
 
-## Accounts and offers
-| App | Deposited | Offer and key terms | Status |
+## Book inventory
+| App | Cash | Promos left | Notes |
 |---|---|---|---|
-| BetMGM | $100 | 10 No Sweat tokens. Max $100 stake, refund up to $100 as one bonus bet (7-day expiry). New token issued **on login each day** for 9 more days (miss a login and it's forfeited). Token expires 24h after issue. Regular odds only, no boosts. Apply via "Apply Reward" on the slip. | Day 1 token used |
-| Hard Rock Bet | $55 | 10 No Sweat tokens, one per day. Max $50, refund as bonus bet (7-day expiry). **Token expires 11:59pm the day it's issued.** Qualifier was a $5 bet at −500 or longer. | Qualifier and day 1 token used |
-| Fanatics | $20 | Bet $20 → $50 FanCash/day for 7 days ($350). **Must opt in daily. FanCash expires 24h after issue.** Min odds −500. Treat FanCash like a bonus bet (stake not returned); verify on the slip. | Qualifier placed |
-| DraftKings | $5 | $200 in bonus bets regardless of result, as 8 × $25. $50 on day 0 (received), then $50 click-to-claim on days 7, 14, 21. Each bonus expires 7 days after issue. | Qualifier placed, day 0 $50 used |
-| bet365 | $10 | $200 in bonus bets once $10 of qualifying bets settle. Min odds −500. **Does not allow backing both sides at bet365.** | Qualifier placed |
-| Caesars | $51 | 10 × 100% profit boosts. Max $25 per bet, min odds −10000, straight bets OK. **Expire 11/19/2026 2:17am.** Not yet confirmed whether boosted winnings pay in cash or bonus; check after the first one. | $1 qualifier placed, all 10 boosts unused, $50 balance |
-| BetRivers | $90 (pending) | 2nd Chance: **first** real-money bet refunded as a bonus bet up to $500 if it loses (30-day expiry). Code SPORTS was used. Must apply the Second Chance token on the slip. | **No bet placed yet.** Plan: pair with a BetMGM no-sweat token |
-| FanDuel | $0 | Didn't work for the user. Retry with Instant Bank Transfer. | Not active |
+| BetMGM | $10 (+$150 in open bets) | **8 × $100 No Sweat tokens**, one per day on login, 24h expiry | Day 2 used on Thunder; a 25% boost was used on Cavs |
+| DraftKings | $4.16 (+$186 open) | $5 Discord bonus bet; **6 × $25 welcome bonus bets** releasing days 7, 14, 21 (7-day expiry each) | Main cash book |
+| bet365 | $18.34 | **$114 in bonus bets** (7-day expiry) | Don't back both sides at bet365 |
+| Hard Rock Bet | $0 (+$50 open) | **8 × $50 No Sweat tokens**, issued daily at midnight, expire 11:59pm the same day | Day 2 used on Bucks |
+| Fanatics | $36.67 (+$5.11 FanCash) | **5 × $50 FanCash drops** left; must opt in daily, 24h expiry | Day 2 used on UMass |
+| Caesars | $0.38 (+$50 open) | **7 × 100% Profit Boosts**, $25 max each, expire 11/19 2:17am; pay in cash | 3 used |
+| theScore Bet | $2 (+$88 open) | $1,000 First Bet Reset in play: $88 on Grizzlies +145. If it loses, the refund comes as 5 bonus bets of 20% each (30-day expiry) | |
+| Betr Picks | $0 (+$50 entry) | **3 more $50 No Sweat entries** (1 now, 2 dropping Nov 12); Betr Bucks have 1x playthrough | Check Virginia eligibility |
 
-Total deposited: **$331**.
+**Not signed up yet:** BetRivers (2nd Chance up to $500, code `SPORTS`; an earlier $90 Instant Bank Transfer deposit showed pending, so check whether it cleared), Kalshi (deposit $10, trade $25, get $60, code `MAX60`), Novig (deposit $10, get $50, code `COVERS`), Bally Bet, Sporttrade (a VA exchange), and FanDuel (failed before; retry with Trustly). Skip PrizePicks. Virginia has no legal online casino.
 
-Still to sign up (get the offer terms before any first bet): **theScore Bet, Bally Bet, Sporttrade** (a legal VA betting exchange; use it as the hedge side for better conversion). Online casino isn't legal in VA, so ignore casino promos.
+## Friday's open bets (all math verified)
+1. **UMass @ Boston College, 4:00pm.** Fanatics UMass +200, $50 FanCash (pays $100). DraftKings BC −245, $71 cash (pays $99.97). **+$29 either way.**
+2. **76ers @ Cavaliers, 7:30pm.** BetMGM Cavs +125, $50 cash with a 25% boost (pays $128.13). Caesars 76ers −155, $25 with a 100% boost (pays $57.26). bet365 76ers −144, $50 bonus (pays $34.72). **Cavs +$53.13 / 76ers +$16.98.**
+3. **Jazz @ Mavericks, 8:10pm.** BetMGM Jazz +220, $56 bonus (pays $123.20). DraftKings Mavs −253, $81 cash (pays $113.01). bet365 Mavs −280, $36 bonus (pays $12.85). **Jazz +$42.20 / Mavs +$44.86.**
+4. **Raptors @ Bucks, 8:10pm.** Hard Rock Bucks +230, $50 No Sweat (pays $165). DraftKings Raptors −263, $75.32 (pays $103.95). **Bucks +$39.68 / Raptors +$13.63** (counting the $50 refund at 70%).
+5. **Thunder @ Grizzlies, 8:10pm.** BetMGM Thunder −175, $100 No Sweat (pays $157.14). theScore Grizzlies +145, $88 First Bet Reset (pays $215.60). **Thunder +$30.74 / Grizzlies +$97.60** (refunds at 70%).
+6. **Betr 2-pick No Sweat entry, $50.** Leg 1 won: Curry Over 27.5. The DraftKings hedge on Curry Under ($30) lost. Leg 2 pending: **Burrow Over 276.5 passing yards** (CIN @ ATL, Sun Nov 8, 9:30am).
+   - **Correction:** Gemini's "+$57 either way" was overstated. Assuming a 3x payout ($150), the hedge that evens it out is **about $60 on Burrow Under** at −110, locking in **about +$40** (Over: 150 − 50 − 60 = +$40; Under: 54.6 − 50 + 35 refund value = +$40). After the $30 lost Curry hedge, the entry nets about +$10.
+   - **Under max EV:** don't hedge unless the no-vig price makes Burrow Over clearly worse than 33% (a 3x payout needs about 33% to break even before the refund). Confirm the actual payout multiplier from the Betr screenshot first.
 
-## Open bets (placed early Nov 5, 2026; games that night, ET)
-**Magic @ Suns, 9:10pm**
-- BetMGM: Magic +100, $56, No Sweat token (refund $56 bonus if it loses)
-- Caesars: Magic +100, $1 (qualifier)
-- Fanatics: Suns −120, $20 (pays $36.67)
-- bet365: Suns −120, $10 (pays $18.33)
-- DraftKings: Suns −119, $5 (pays $9.20)
-- Hard Rock: Suns −120, $5 (pays $9.17)
-- Result: about +$16 either way (Suns case counts the $56 BetMGM refund at 70%)
-
-**Heat @ Warriors, 10:10pm**
-- DraftKings: Heat +224, 2 × $25 bonus bets (each pays $56 profit)
-- BetMGM: Warriors −275, $44 cash (pays $60)
-- Hard Rock: Warriors −275, $50, No Sweat token (pays $68.18; refund $50 bonus if it loses)
-- Result: Warriors win about +$34; Heat win about +$53 (counting the Hard Rock refund at 70%)
-
-## Daily routine
-1. Ask for screenshots of **balances at every app**, any **new bonus bets / FanCash / refunds**, and **that day's games and odds**.
-2. Log in to BetMGM (gets the token). Use the Hard Rock token before 11:59pm. Use Fanatics FanCash within 24h. Claim DraftKings bonuses on days 7, 14, 21.
-3. Build that day's hedges combining promos: no-sweat vs no-sweat, Caesars boost vs no-sweat, bonus bets hedged with cash, and bonus vs bonus when cash is short. Give exact stakes in a table and show the result for each outcome.
-4. Next big move: **BetRivers 2nd Chance (about $87) vs BetMGM No Sweat ($100)** on a near-even game, about $57 locked.
-
-## Rules to repeat
-- **Never tap Cash Out.** Let bets settle.
-- The **first bet at a new app usually triggers the offer.** Get the terms first.
-- Use full-game moneylines (NBA preferred, no ties). Avoid NFL spreads on key numbers (pushes). No parlays or long shots.
-- Check minimum odds per promo (Fanatics, bet365, Hard Rock: −500 or longer).
-- Place the promo-side bet first, then the hedges right away.
-- Spread volume across apps. Books limit promo-only accounts.
-
-## Taxes
-- W-2G needs winnings ≥ the threshold ($2,000 from 2026; was $600) **and** ≥ 300× the stake on a single bet. None of these bets come close.
-- No W-2G doesn't mean no tax. All winning legs are income. On the standard deduction, losses aren't deductible, so tax is on **gross winnings**, which is more than the actual profit. If itemizing, only 90% of losses are deductible from 2026. Virginia taxes winnings too. Suggest a tax preparer.
-- The user has a tracker app (Card Hub, "Betting" tab) with a hedge calculator (qualifying / bonus / no-sweat modes) and a bet log that totals profit and taxable winnings.
-
-## Expected outcome
-About **$850–1,100 profit** across all offers if executed daily. Realistic target is about $800–900. Missing days and expired FanCash are the main losses.
+## Next steps
+1. **Friday night, after about 10:30pm:** tally results. Claim refunds: Hard Rock $50 if the Raptors win, theScore $88 (as 5 × $17.60) if the Thunder win, BetMGM $100 if the Grizzlies win. Check balances at DraftKings and BetMGM.
+2. **Saturday, Nov 7 (max EV):**
+   - bet365: $114 in bonus bets on +300 to +500 underdogs, unhedged, split across 2–3 games.
+   - Hard Rock: day 3 $50 No Sweat on a +250 to +350 underdog, before 11:59pm.
+   - Fanatics: opt in for day 3 FanCash, then bet it on +300 to +500.
+   - BetMGM: log in for the day 3 $100 No Sweat and bet it on a +200 to +400 underdog.
+   - Caesars: 7 boosts at $25 on +150 to +250 underdogs, unhedged. Spread them over several days and games instead of all at once.
+3. **Sunday, Nov 8, before 9:30am:** decide on the Burrow hedge using the actual Betr payout and the live line.
+4. **Taxes:** no bet comes close to a W-2G (it needs winnings of $2,000+ and 300x the stake). But every winning bet is income. On the standard deduction losses aren't deductible, and itemizing allows only 90% of losses from 2026, so taxable winnings will exceed actual profit. Virginia taxes winnings too. Log every bet. The user's tracker (Card Hub, "Betting" tab) records bets and totals.
