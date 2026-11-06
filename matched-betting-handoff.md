@@ -44,6 +44,7 @@ Never plan one promo in isolation. Each day, list every live promo, its expiry a
 | BetMGM | **33% football odds boost** (straight OK, max $100, min odds −300, winnings paid in cash) | about Sun Nov 8 | about $15 |
 | BetMGM | 25% boost on 3+ leg parlays at +400 or longer (max $100) | Sat 12:45am | skip (about +$4 EV, −$100 worst case) |
 | Fanatics | 5 × $50 FanCash (opt in daily) | 24h each | about $200 |
+| Fanatics | **FanCash balance $55.11 showing (Fri 3:35pm); check its expiry.** Also a **20% NFL profit boost, any bet, max $200 stake, claim by Sun 4:05pm ET** (about +$7–9 per $100 unhedged; size it to the cushion) | Sun 4:05pm | about $10–15 |
 | Hard Rock | 8 × $50 No Sweat | 11:59pm daily | about $175 |
 | DraftKings | 6 × $25 bonus (Nov 12, 19, 26), $5 Discord bonus, **Bet & Get $25 (place $25 at −250 or longer by Sat ~11:09am)** | 7 days each | about $140 |
 | Caesars | 7 × 100% boosts ($25 max) | 11/19 2:17am | about $100 |
@@ -52,7 +53,7 @@ Never plan one promo in isolation. Each day, list every live promo, its expiry a
 | Underdog | 4 × $10 bonus entries | 24h each | about $30 |
 | Bally | Pending ULM +510 (Sat 3pm): win → 5 × $100 bonus | 28 days | in pending |
 | theScore | Refund 5 × $17.60 if Grizzlies lose tonight | 30 days | in pending |
-| **Total** | | | **about $1,165** |
+| **Total** | | | **about $1,175** |
 
 Projected finish when fully optimized: **about $1,350–1,600 profit**.
 
