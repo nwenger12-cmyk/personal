@@ -93,6 +93,13 @@ Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (a
 - New: BetMGM **Pro Football (NFL) 33% boost**, max $100, min total odds −300, exp **11/09 12:04am**.
 - Banked cash +$158.54; credits $238 (HR $100, theScore $88, Betr $50). Pace ≈ −$136 (alert −$150). Cash-only cushion is exceeded by today's open worst case (−$190 vs $158.54); with credits it holds. **No new unhedged cash bets until Saturday settles.**
 
+## CURRENT PLAN (Sat Nov 7 afternoon; user unsure, accepted the default)
+- Goal: beat the hedge-everything result (≈ +$1,300) with the highest average total. User would rather avoid cash risk.
+- **Play unhedged:** the daily BetMGM $100 and Hard Rock $50 No Sweat tokens, the Caesars 100% boosts, and all free bets/FanCash/bonus entries. These are the core welcome offers; No Sweat losses are mostly refunded.
+- **Skip optional one-off cash-risk boosts** (e.g. DraftKings $20 50% boost, Underdog $25 100% boost): small EV, lose most of the time.
+- Odds ranges: free bets +200 to +350; No Sweats +150 to +250; boosts +150 to +250.
+- Revisit if the user changes their mind.
+
 ## LATEST RULE (user, Sat Nov 7 midday): ignore taxes; maximize expected cash
 - Decide everything on **pre-tax EV**. No hedging of open bets (costs EV). Use every +EV promo now, unhedged.
 - Only remaining safeguard: don't let the **cash** worst case push total below deposits by much. Ask the user before applying even this.
