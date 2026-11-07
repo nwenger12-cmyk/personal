@@ -96,6 +96,7 @@ Each day:
 ---
 
 ## 7. Taxes and compliance
+- **Form thresholds (user rule):** no single bet may have winnings ≥ **$1,999** or odds beyond about **+600** (W-2G needs both ≥ $2,000 and 300×). On **pick'em/DFS apps (Underdog, Betr)**, which issue a 1099-MISC on **annual net winnings** (threshold $2,000 from 2026; confirm per app), keep each app's yearly net winnings **under $1,900**. Staying under these thresholds changes only paperwork: **all winnings must still be reported on the tax return.**
 **User profile:** accounting/CPA-track student; expects to take the **standard deduction** for 2026. Keep tax-grade records.
 
 - **W-2G (sports wager):** issued only if winnings (payout less stake) ≥ **$2,000** (from 2026, under the 2025 law; $600 before) **and** ≥ **300×** the stake. The $5,000 figure is the withholding/poker-tournament threshold, not the sports reporting threshold. No bet here comes close to 300×.

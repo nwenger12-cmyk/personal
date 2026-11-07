@@ -65,6 +65,7 @@ Projected finish when fully optimized: **about $1,350–1,600 profit**.
 - **Rule:** ask the user to clarify anything that doesn't reconcile; never guess balances.
 
 ## The user
+- **Form thresholds (user rule):** no single bet may have winnings ≥ **$1,999** or odds beyond about **+600** (W-2G needs both ≥ $2,000 and 300×). On **pick'em/DFS apps (Underdog, Betr)**, which issue a 1099-MISC on **annual net winnings** (threshold $2,000 from 2026; confirm per app), keep each app's yearly net winnings **under $1,900**. Staying under these thresholds changes only paperwork: **all winnings must still be reported on the tax return.**
 - **Accounting/CPA-track student; standard deduction for 2026.** Tax is owed on gross winnings (losses not deductible), so favor free-bet conversions and minimal hedging. Track gross winnings separately. No noise bets (user declined).
 - 21, lives in Virginia. Accounts are open and verified at the books below.
 - **Strategy: max profit, but never a loss overall** (user's words, Nov 6). Run it with the **cushion rule**:
