@@ -93,6 +93,12 @@ Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (a
 - New: BetMGM **Pro Football (NFL) 33% boost**, max $100, min total odds −300, exp **11/09 12:04am**.
 - Banked cash +$158.54; credits $238 (HR $100, theScore $88, Betr $50). Pace ≈ −$136 (alert −$150). Cash-only cushion is exceeded by today's open worst case (−$190 vs $158.54); with credits it holds. **No new unhedged cash bets until Saturday settles.**
 
+## More user settings (Sat Nov 7)
+- Extra deposits: **no cap** if it's for a planned promo. **Stop after the welcome offers**; withdraw each app as its promos finish.
+- If an app limits the account: use what's left, then withdraw. **Live bets OK.** Burrow hedge: decide Sunday by pace.
+- **No new apps.** Updates: **short** (what to do, scoreboard, next 3 deadlines).
+- Taxes: income over $60k, standard deduction, handles taxes personally. Marginal ≈ 22–24% federal + 5.75% VA on **gross winnings**, so hedging is tax-costly. Ask before applying a tax-aware hedge rule.
+
 ## Strategy settings (user, Sat Nov 7 2:30am): "somewhere in between"
 - **Floor:** target final profit ≥ **$1,000**. Each day, check projected finish minus 1 SD (SD ≈ $530 now, shrinking as promos are used). If that falls below $1,000, hedge cash-risk promos that day.
 - **BetMGM $100 No Sweat (7 left): decide day by day.** Hedge when pace < $0 or the floor check fails; unhedged when pace ≥ $0 and the floor holds.
