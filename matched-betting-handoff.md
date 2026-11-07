@@ -93,6 +93,12 @@ Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (a
 - New: BetMGM **Pro Football (NFL) 33% boost**, max $100, min total odds −300, exp **11/09 12:04am**.
 - Banked cash +$158.54; credits $238 (HR $100, theScore $88, Betr $50). Pace ≈ −$136 (alert −$150). Cash-only cushion is exceeded by today's open worst case (−$190 vs $158.54); with credits it holds. **No new unhedged cash bets until Saturday settles.**
 
+## LOCKED PLAN (user: "keep a consistent plan", Sat Nov 7). Apply without re-asking.
+1. **Play unhedged:** daily BetMGM $100 + Hard Rock $50 No Sweats (+150 to +250), Caesars 100% boosts (+150 to +250), all free bets / FanCash / bonus entries / refunds (+200 to +350).
+2. **Skip:** every optional one-off promo that risks cash (e.g. DraftKings 50% $20 boost, Underdog 100% $25 boost). Don't pitch them as "optional"; just mark them skipped.
+3. Never hedge, never cash out. Ignore taxes. Withdraw idle cash beyond the next day's needs.
+4. Report each result plus the scoreboard. Don't reopen strategy unless the user asks.
+
 ## CURRENT PLAN (Sat Nov 7 afternoon; user unsure, accepted the default)
 - Goal: beat the hedge-everything result (≈ +$1,300) with the highest average total. User would rather avoid cash risk.
 - **Play unhedged:** the daily BetMGM $100 and Hard Rock $50 No Sweat tokens, the Caesars 100% boosts, and all free bets/FanCash/bonus entries. These are the core welcome offers; No Sweat losses are mostly refunded.
