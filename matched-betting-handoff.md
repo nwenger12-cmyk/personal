@@ -93,6 +93,15 @@ Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (a
 - New: BetMGM **Pro Football (NFL) 33% boost**, max $100, min total odds −300, exp **11/09 12:04am**.
 - Banked cash +$158.54; credits $238 (HR $100, theScore $88, Betr $50). Pace ≈ −$136 (alert −$150). Cash-only cushion is exceeded by today's open worst case (−$190 vs $158.54); with credits it holds. **No new unhedged cash bets until Saturday settles.**
 
+## SCOREBOARD FORMAT (user asked for clearer labels; use exactly this)
+| | Amount | What it means |
+|---|---|---|
+| 💵 **Profit so far** | +$X | Money made on finished bets (cash only) |
+| 🏦 **Still in the apps (your own money)** | $X | Deposits minus withdrawals |
+| 💰 **Total value if you withdrew everything now** | $X | Your own money + profit so far |
+| 🎯 **Expected final profit** | +$X | If every remaining promo plays out on average |
+| 🍀 **Luck so far** | ±$X | Actual minus expected on finished bets (negative = unlucky) |
+
 ## LOCKED PLAN (user: "keep a consistent plan", Sat Nov 7). Apply without re-asking.
 1. **Play unhedged:** daily BetMGM $100 + Hard Rock $50 No Sweats (+150 to +250), Caesars 100% boosts (+150 to +250), all free bets / FanCash / bonus entries / refunds (+200 to +350).
 2. **Skip:** every optional one-off promo that risks cash (e.g. DraftKings 50% $20 boost, Underdog 100% $25 boost). Don't pitch them as "optional"; just mark them skipped.
