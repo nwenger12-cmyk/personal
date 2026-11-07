@@ -87,6 +87,12 @@ Cash: DraftKings $344.23 · BetMGM $295.26 · bet365 $31.20 (+$114 bonus) · Har
 Friday results: BC +$28.97 · Cavs side +$53.13 · Mavs side +$44.87 · Raptors side −$21.37 cash (+$50 HR credit) · Thunder side −$30.86 cash (+$88 theScore credit) · Under 231.5 bonus +$23.14 · Underdog Celtics +$2.61 · Betr 3-pick missed −$50 (+$50 Betr Bucks) · Hornets FanCash, Wizards entry, UNCG bonus: $0.
 Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (alert at −$150).
 
+## Sat Nov 7 update (2:10am)
+- Placed Sat: BetMGM UConn +240 $100 No Sweat · BetMGM Maryland +170→+226 $100 (33% boost) · Hard Rock Goyang Orions +190 $50 No Sweat (**lost** → $50 HR bonus refund) · Caesars Minnesota +165 $25 100% boost (pays $107.50) · Caesars BYU +156 $25 100% boost (pays $103) · Caesars Miami +225 $10 25% boost (pays $38.13). Pending: Fanatics FanCash → Iowa State; Underdog entry #2 → NC State.
+- Caesars deposit $34.62 (Venmo). DraftKings **withdrawal $180** pending. Net deposits **$546.45**.
+- New: BetMGM **Pro Football (NFL) 33% boost**, max $100, min total odds −300, exp **11/09 12:04am**.
+- Banked cash +$158.54; credits $238 (HR $100, theScore $88, Betr $50). Pace ≈ −$136 (alert −$150). Cash-only cushion is exceeded by today's open worst case (−$190 vs $158.54); with credits it holds. **No new unhedged cash bets until Saturday settles.**
+
 ## The user
 - **Form thresholds (user rule):** no single bet may have winnings ≥ **$1,999** or odds beyond about **+600** (W-2G needs both ≥ $2,000 and 300×). On **pick'em/DFS apps (Underdog, Betr)**, which issue a 1099-MISC on **annual net winnings** (threshold $2,000 from 2026; confirm per app), keep each app's yearly net winnings **under $1,900**. Staying under these thresholds changes only paperwork: **all winnings must still be reported on the tax return.**
 - **Accounting/CPA-track student; standard deduction for 2026.** Tax is owed on gross winnings (losses not deductible), so favor free-bet conversions and minimal hedging. Track gross winnings separately. No noise bets (user declined).
