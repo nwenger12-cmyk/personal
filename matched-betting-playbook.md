@@ -53,7 +53,7 @@ Notation: S = stake, B = decimal odds on the promo side, H = decimal odds on the
 | **Profit boost** (k% more winnings) | Underdog +150 to +250, unhedged within the cushion | B′ = 1 + (1+k)(B−1), then the qualifying formula | 100% boost on $25 ≈ +$14 |
 | **Odds-tiered welcome** (e.g., Bally: +500 or longer, wins → $500 bonus) | Minimum stake at the top tier, unhedged | n/a | +$55 on $10 |
 | **Bet & Get** (wager $X, get a bonus) | Put the required cash wager on the opposite side of another promo bet | n/a | About +$18 per $25 |
-| **Pick'em no-sweat** (Betr, Underdog) | 3-pick "Perfect"; only legs a sportsbook prices at −130 or stronger | n/a | About +$20–35 per $50 |
+| **Pick'em no-sweat** (Betr, Underdog) | 3-pick "Perfect"; only legs a sportsbook prices at −130 or stronger; **legs uncorrelated (different games, or unrelated stats)** | n/a | About +$20–35 per $50 |
 
 **Generally skip:** parlay boosts on 5+ leg same-game parlays (the house edge is larger than the boost), deposit-match offers with heavy playthrough, and boosts worth under about $3 that need extra deposits.
 
@@ -89,18 +89,26 @@ Each day:
 - Only moneylines or simple props; no long parlays. Odds beyond about +600 are avoided, which also keeps W-2G's 300× test out of reach.
 - Avoid NFL spreads on key numbers (pushes can void qualifiers).
 - Read each offer's terms before the **first bet at a new app**, since that bet usually triggers the welcome offer.
-- Use full-dollar stakes and popular markets to look like a normal customer and reduce limiting.
+- Use full-dollar stakes and popular markets to look like a normal customer and reduce limiting. **The user declined deliberate "noise" (non-promo) bets; don't add them.**
 - **Never fabricate balances.** When something doesn't reconcile, ask the user.
 - Excluded apps: **BetRivers** (user ruled it out) and **Sporttrade** (out of business). Don't suggest them. No online casino (not legal in VA).
 
 ---
 
 ## 7. Taxes and compliance
-- **W-2G** for a sports wager requires winnings ≥ the threshold ($2,000 from 2026; $600 before; confirm) **and** ≥ 300× the stake on a single bet. No bet here comes close.
-- **No W-2G ≠ no tax.** Every winning leg is income. On the standard deduction gambling losses aren't deductible, so tax is on **gross winnings**. If itemizing, only **90% of losses** are deductible from 2026. Virginia taxes winnings too.
-- Advise setting aside about 25% of profit and consulting a tax preparer. Keep every app's year-end win/loss statement plus the bet log (the Card Hub "Betting" tab in this repo tracks bets, totals, and taxable vs net).
+**User profile:** accounting/CPA-track student; expects to take the **standard deduction** for 2026. Keep tax-grade records.
 
----
+- **W-2G (sports wager):** issued only if winnings (payout less stake) ≥ **$2,000** (from 2026, under the 2025 law; $600 before) **and** ≥ **300×** the stake. The $5,000 figure is the withholding/poker-tournament threshold, not the sports reporting threshold. No bet here comes close to 300×.
+- **No W-2G ≠ no tax.** All gambling winnings go on Schedule 1 (other income), whether or not reported.
+- **Standard deduction ⇒ losses are not deductible.** Taxable income is the **gross winnings** of every winning bet, not net profit. (Itemizers deduct losses on Schedule A up to winnings, and from 2026 only **90%** of losses, per the 2025 law's change to IRC §165(d).)
+- **Per-wager vs session:** for sports betting the conservative position is per-wager reporting (each winning bet's profit is a separate winning). The IRS session-netting safe harbor (Notice 2015-21) addresses slots. Track both, and file per-wager unless a preparer approves otherwise.
+- **Virginia** taxes winnings as ordinary income.
+- **The tax consequence for strategy (standard deduction):** every hedge creates a taxable winning leg plus a non-deductible losing leg. So:
+  - Prefer **free-bet conversions** (no losing cash leg) and **minimal hedge sizes**.
+  - Avoid unnecessary qualifying hedges and churn. A $100 vs $100 qualifier at −110 makes about $91 of taxable winnings for about a −$9 result.
+  - Track **gross winnings** as its own running total next to net profit.
+- **Possible $0 federal tax:** if the user's total 2026 income (wages + gross winnings) stays under the standard deduction (about $16,000 single), federal tax may be $0. State tax differs. Confirm with the user's income picture.
+- **Records:** export each app's year-end win/loss statement, and keep the per-bet log (the Card Hub "Betting" tab already computes gross winnings, net, and taxable under standard vs itemized).
 
 ## 8. Risks and mitigations
 | Risk | Mitigation |
@@ -122,7 +130,15 @@ Each day:
 
 ---
 
-## 10. Reviewer checklist
+## 10. External review notes (Nov 7)
+Accepted: keep pick'em legs uncorrelated; re-check hedge-book odds right before submitting; aim for at least 70–75% conversion on larger bonus bets.
+Rejected (incorrect):
+- "W-2G threshold is $5,000 for 2026." Wrong; it's $2,000 (with the 300× test).
+- "Verify the 90% loss rule." The rule is real (2025 law, effective 2026).
+- "Expected Return = Stake × B/H." Wrong for bonus bets (stake not returned); the correct hedged value is Stake × (B−1)/H.
+Declined by the user: noise bets.
+
+## 11. Reviewer checklist
 - [ ] Is every hedge sized so that both outcomes are about equal (or deliberately unhedged within the cushion)?
 - [ ] Are free bets placed at +300 to +600 rather than short odds?
 - [ ] Are promos diversified across games, with no same-app two-sided bets?

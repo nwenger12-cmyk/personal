@@ -65,6 +65,7 @@ Projected finish when fully optimized: **about $1,350–1,600 profit**.
 - **Rule:** ask the user to clarify anything that doesn't reconcile; never guess balances.
 
 ## The user
+- **Accounting/CPA-track student; standard deduction for 2026.** Tax is owed on gross winnings (losses not deductible), so favor free-bet conversions and minimal hedging. Track gross winnings separately. No noise bets (user declined).
 - 21, lives in Virginia. Accounts are open and verified at the books below.
 - **Strategy: max profit, but never a loss overall** (user's words, Nov 6). Run it with the **cushion rule**:
   - **Free bets / FanCash / refunds can't lose cash**, so always play them **unhedged on +300 to +600** for max EV.
