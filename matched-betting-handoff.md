@@ -82,6 +82,11 @@ Projected finish when fully optimized: **about $1,350–1,600 profit**.
 - Confirmed by the user: Heat @ Warriors Thursday → **Warriors won**. Betr works in VA; the 2-pick **pays 3x**. Bally welcome offer **shows active**. User **declined** calendar reminders: remind in chat instead.
 - **Rule:** ask the user to clarify anything that doesn't reconcile; never guess balances.
 
+## Friday night close (Sat Nov 7, 12:15am): all reconciled
+Cash: DraftKings $344.23 · BetMGM $295.26 · bet365 $31.20 (+$114 bonus) · Hard Rock ≈$63.18 (+$50 refund bonus) · Fanatics $36.67 · Underdog $12.77 · theScore ≈$2 (+5 × $17.60 bonus, exp Nov 13 10:28pm) · Caesars ≈$0.38 · Bally $0 (ULM +510 open, Sat 3pm) · Betr $0 (+$50 Betr Bucks; Curry/Burrow entry alive).
+Friday results: BC +$28.97 · Cavs side +$53.13 · Mavs side +$44.87 · Raptors side −$21.37 cash (+$50 HR credit) · Thunder side −$30.86 cash (+$88 theScore credit) · Under 231.5 bonus +$23.14 · Underdog Celtics +$2.61 · Betr 3-pick missed −$50 (+$50 Betr Bucks) · Hornets FanCash, Wizards entry, UNCG bonus: $0.
+Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (alert at −$150).
+
 ## The user
 - **Form thresholds (user rule):** no single bet may have winnings ≥ **$1,999** or odds beyond about **+600** (W-2G needs both ≥ $2,000 and 300×). On **pick'em/DFS apps (Underdog, Betr)**, which issue a 1099-MISC on **annual net winnings** (threshold $2,000 from 2026; confirm per app), keep each app's yearly net winnings **under $1,900**. Staying under these thresholds changes only paperwork: **all winnings must still be reported on the tax return.**
 - **Accounting/CPA-track student; standard deduction for 2026.** Tax is owed on gross winnings (losses not deductible), so favor free-bet conversions and minimal hedging. Track gross winnings separately. No noise bets (user declined).
