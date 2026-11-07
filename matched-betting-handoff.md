@@ -93,6 +93,15 @@ Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (a
 - New: BetMGM **Pro Football (NFL) 33% boost**, max $100, min total odds −300, exp **11/09 12:04am**.
 - Banked cash +$158.54; credits $238 (HR $100, theScore $88, Betr $50). Pace ≈ −$136 (alert −$150). Cash-only cushion is exceeded by today's open worst case (−$190 vs $158.54); with credits it holds. **No new unhedged cash bets until Saturday settles.**
 
+## PRIMARY GOAL (user, Sat Nov 7): finish ABOVE the "hedge everything" benchmark
+- Benchmark ≈ +$1,300 pre-tax (≈ $650–750 after tax); the hedged path would be ≈ +$300 banked now vs actual +$187 (≈ $115 behind).
+- Current plan: P(beat benchmark) ≈ 67% pre-tax, ≈ 70% after tax. Maximize P = Φ(edge / SD), so prefer **high EV per unit of variance**:
+  - Free bets / FanCash: **+200 to +350** (not +500). Nearly the same EV, much lower variance.
+  - No Sweat tokens: **+150 to +250** underdogs.
+  - Boosts: +150 to +250 (unchanged).
+  - **Don't hedge** (after tax, hedging lowers edge more than variance and reduces P).
+  - Spread across as many independent games as possible.
+
 ## ACTIVE RULE (user said yes, Sat Nov 7): after-tax decisions
 - Judge every hedge on **after-tax EV**: EV − 0.28 × E[gross winnings] (standard deduction; losses not deductible).
 - **Default: unhedged** for all promos. **Hedge only if pace < −$150** (cushion protection), or if a hedge has higher after-tax EV.
