@@ -17,6 +17,23 @@ User's request: keep total cash in readily available and always check results ag
 | Promos left (remaining EV) | about $1,000 | Fri Nov 6 |
 | Projected finish | about $1,250–1,500 profit, about $1,900–2,150 back | Fri Nov 6 |
 
+**⏰ Expiry watch (show with every scoreboard, soonest first; drop items once used)**
+| Deadline | App | Promo | Status |
+|---|---|---|---|
+| Sat 11:59pm | Hard Rock | Day-3 $50 No Sweat | unused |
+| 24h after login | BetMGM | Day-3 $100 No Sweat (log in daily) | unused |
+| 24h after opt-in | Fanatics | Day-3 $50 FanCash (opt in daily) | not yet opted in |
+| 24h after grant | Underdog | Bonus entry #2 ($10) | check |
+| Sun 3:00am | Caesars | 25% Miami/ND boost ($10 max) | optional |
+| Sun ~Nov 8 | BetMGM | 33% football odds boost ($100 max) | unused |
+| Sun 9:30am | Betr | Burrow hedge decision | pending |
+| Sun 4:05pm | Fanatics | 20% NFL boost (claim) | claim status? |
+| ~Nov 12–13 | bet365 | $114 bonus bets (7-day) | confirm exact date |
+| Nov 12 | DraftKings | Day-7 $50 welcome claim | upcoming |
+| ~Nov 12 | Betr | No Sweat tokens #3–4 arrive | upcoming |
+| Nov 19 2:17am | Caesars | 7 × 100% boosts | 7 left |
+| unknown | DraftKings | $5 Discord bonus | confirm expiry |
+
 How to update:
 - **Deposited:** add every new deposit the moment it's made.
 - **Banked profit:** sum of the net results of settled bets (cash; refunds counted only once converted).
