@@ -93,6 +93,14 @@ Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (a
 - New: BetMGM **Pro Football (NFL) 33% boost**, max $100, min total odds −300, exp **11/09 12:04am**.
 - Banked cash +$158.54; credits $238 (HR $100, theScore $88, Betr $50). Pace ≈ −$136 (alert −$150). Cash-only cushion is exceeded by today's open worst case (−$190 vs $158.54); with credits it holds. **No new unhedged cash bets until Saturday settles.**
 
+## Strategy settings (user, Sat Nov 7 2:30am): "somewhere in between"
+- **Floor:** target final profit ≥ **$1,000**. Each day, check projected finish minus 1 SD (SD ≈ $530 now, shrinking as promos are used). If that falls below $1,000, hedge cash-risk promos that day.
+- **BetMGM $100 No Sweat (7 left): decide day by day.** Hedge when pace < $0 or the floor check fails; unhedged when pace ≥ $0 and the floor holds.
+- **Pace alert stays at −$150.** Below it, hedge all cash-risk promos.
+- **Free bets, FanCash, bonus entries:** always unhedged on +300 to +500 (can't lose cash).
+- **Time:** up to about 1 hour a day. OK to chase small boosts and line-shop.
+- **Corrected uncertainty:** projected profit ≈ +$1,550, 1 SD ≈ ±$530 (likely $1,050–2,100), P(<$0) < 1%, P(<$1,000) ≈ 15%.
+
 ## The user
 - **Form thresholds (user rule):** no single bet may have winnings ≥ **$1,999** or odds beyond about **+600** (W-2G needs both ≥ $2,000 and 300×). On **pick'em/DFS apps (Underdog, Betr)**, which issue a 1099-MISC on **annual net winnings** (threshold $2,000 from 2026; confirm per app), keep each app's yearly net winnings **under $1,900**. Staying under these thresholds changes only paperwork: **all winnings must still be reported on the tax return.**
 - **Accounting/CPA-track student; standard deduction for 2026.** Tax is owed on gross winnings (losses not deductible), so favor free-bet conversions and minimal hedging. Track gross winnings separately. No noise bets (user declined).
