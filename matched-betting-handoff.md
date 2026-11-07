@@ -112,7 +112,7 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
 ## Money summary (deposit histories confirmed Nov 6)
 | App | Deposited |
 |---|---|
-| DraftKings | $205.00 |
+| DraftKings | $205.00 (includes the $100 EDGE Boost match → user's own cash $105) |
 | BetMGM | $200.00 |
 | Hard Rock | $95.83 |
 | theScore Bet | $90.00 |
