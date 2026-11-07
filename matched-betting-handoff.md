@@ -31,8 +31,9 @@ User's request: keep total cash in readily available and always check results ag
 | ~Nov 12–13 | bet365 | $114 bonus bets (7-day) | confirm exact date |
 | Nov 12 | DraftKings | Day-7 $50 welcome claim | upcoming |
 | ~Nov 12 | Betr | No Sweat tokens #3–4 arrive | upcoming |
+| **Nov 13 10:28pm** | theScore Bet | 5 × $17.60 bonus bets (Bet Reset refund) | unused; play on +300 to +500, spread across games |
+| ~Nov 13 | Hard Rock | $50 refund bonus (Bucks No Sweat) | unused |
 | Nov 19 2:17am | Caesars | 7 × 100% boosts | 7 left |
-| unknown | DraftKings | $5 Discord bonus | confirm expiry |
 
 How to update:
 - **Deposited:** add every new deposit the moment it's made.
