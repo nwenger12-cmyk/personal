@@ -102,6 +102,12 @@ Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (a
 | 🎯 **Expected final profit** | +$X | If every remaining promo plays out on average |
 | 🍀 **Luck so far** | ±$X | Actual minus expected on finished bets (negative = unlucky) |
 
+## UPDATED PLAN (user, Tue Nov 10 midday): "option 2" — smoother odds, still unhedged. Supersedes odds ranges below.
+- **Bonus bets / FanCash / free entries / refunds:** +100 to +150 (or about 2x on pick'em). Wins ~45% of the time instead of ~25%; costs ~10–15% of their value.
+- **No Sweats (BetMGM $100, Hard Rock $50):** +150 to +200, unhedged.
+- **Boosts:** +150 to +250, small stakes.
+- Still: no hedging, withdraw idle cash, skip parlay/SGP-only promos. If it stops being fun, stop (user reminded of 1-800-MY-RESET).
+
 ## UPDATED PLAN (user, Tue Nov 10 ~1am): back to UNHEDGED. Locked plan below applies.
 - Briefly tried hedging the cash No Sweats ("limit low end, keep high end"), then reverted: on real prices hedging cost ≈ $15–20/day (not $3–5), and unhedged No Sweats already cap a loss at ≈ -30% of stake via the refund.
 - Odds ranges unchanged: No Sweats +200 to +250 (≥ +150 if nothing fits), bonus bets/FanCash/entries +200 to +350, boosts +150 to +300.
