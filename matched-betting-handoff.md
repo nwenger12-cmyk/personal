@@ -102,6 +102,13 @@ Scoreboard: banked cash **+$208.54**, credit $188 (≈$132), pace ≈ −$102 (a
 | 🎯 **Expected final profit** | +$X | If every remaining promo plays out on average |
 | 🍀 **Luck so far** | ±$X | Actual minus expected on finished bets (negative = unlucky) |
 
+## UPDATED PLAN (user, Mon Nov 9 late night): "limit low end, keep high end". Supersedes the locked plan below where they conflict.
+1. **Hedge the cash No Sweats** (BetMGM $100, Hard Rock $50): place the No Sweat on an underdog at about +200 to +300, then hedge the other side at a different app so either result lands about the same (≈ +38% of the token locked). This removes the biggest cash swings for about $3–5 of EV each.
+2. **Keep everything free unhedged:** bonus bets, FanCash, bonus entries and refunds go on +200 to +350 underdogs. These risk no cash and carry the upside.
+3. **Small boosts ($10–25) stay unhedged** at +150 to +300.
+4. Keep withdrawing idle cash so realized profit (≈ +$667 on Nov 9) stays banked.
+5. Benchmark updated Nov 9: hedge-everything ≈ +$1,565 (was +$1,300). Luck at Nov 9 close ≈ -$435 (≈1-in-7 bad run).
+
 ## LOCKED PLAN (user: "keep a consistent plan", Sat Nov 7). Apply without re-asking.
 1. **Play unhedged:** daily BetMGM $100 + Hard Rock $50 No Sweats (+150 to +250), Caesars 100% boosts (+150 to +250), all free bets / FanCash / bonus entries / refunds (+200 to +350).
 2. **Skip:** every optional one-off promo that risks cash (e.g. DraftKings 50% $20 boost, Underdog 100% $25 boost). Don't pitch them as "optional"; just mark them skipped.
