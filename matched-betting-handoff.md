@@ -246,3 +246,12 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
    - Caesars: 7 boosts at $25 on +150 to +250 underdogs, unhedged. Spread them over several days and games instead of all at once.
 3. **Sunday, Nov 8, before 9:30am:** decide on the Burrow hedge using the actual Betr payout and the live line.
 4. **Taxes:** no bet comes close to a W-2G (it needs winnings of $2,000+ and 300x the stake). But every winning bet is income. On the standard deduction losses aren't deductible, and itemizing allows only 90% of losses from 2026, so taxable winnings will exceed actual profit. Virginia taxes winnings too. Log every bet. The user's tracker (Card Hub, "Betting" tab) records bets and totals.
+
+## UPDATED PLAN (user, Wed Nov 11): hybrid hedging
+- Reverse-engineered hedge-everything to date: about +$1,230 vs actual +$641 (luck -$757 on about +$1,398 of EV used so far).
+- **Bonus bets / FanCash / refunds / Betr Bucks: HEDGE.** Bet the bonus on an underdog (+200 to +350) and put cash on the other side at a different app. Hedge cash = bonus × (dog decimal − 1) ÷ favorite decimal. That locks in about 65–75% of face, versus about 50–55% unhedged at +100 to +150.
+- **No Sweats (BetMGM $100, Hard Rock $50): stay UNHEDGED** at +150 to +200. Hedging costs about $15–20/day.
+- **Underdog bonus entries:** play unhedged at about 2× (too small and too awkward to hedge).
+- **Boosts:** unchanged (+150 to +250, small stakes).
+- Keep enough cash in one or two hedge apps (DraftKings, Caesars, theScore) for the hedge side. Never hedge at the same app.
+- Expected final is now about +$1,000 (was +$959).
