@@ -255,3 +255,8 @@ Let B be the decimal odds and p the true win probability (vig removed, using the
 - **Boosts:** unchanged (+150 to +250, small stakes).
 - Keep enough cash in one or two hedge apps (DraftKings, Caesars, theScore) for the hedge side. Never hedge at the same app.
 - Expected final is now about +$1,000 (was +$959).
+
+## APP STATUS (Fri Nov 13)
+- Done (app deleted or $0 with no bonuses; accounts left open for win-back offers): Bally, Underdog, Caesars, Fanatics, bet365 ($0, no bonus bets), theScore (app deleted).
+- Active: BetMGM (daily $100 No Sweat), Hard Rock (daily $50 No Sweat), DraftKings ($25 bonus bets Nov 19 & 26, Bet & Gets), Betr (No Sweat token #4).
+- Caesars $32.50 Nov 8 deposit confirmed; all apps reconciled against Venmo/bank/PayPal/Chase on Nov 11.
